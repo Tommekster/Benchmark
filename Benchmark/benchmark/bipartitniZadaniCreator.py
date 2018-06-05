@@ -4,8 +4,8 @@ Created on 5. 6. 2018
 @author: Tom
 '''
 import numpy as np
-import model
-from powerLaw import powerLaw
+import benchmark.model
+from benchmark.powerLaw import powerLaw
 
 
 def VyrobBipartitniZadani(N, C : np.ndarray, alpha=2.1, mu=2):
@@ -24,7 +24,9 @@ def VyrobBipartitniZadani(N, C : np.ndarray, alpha=2.1, mu=2):
     M = __vyrobClenstvi(N, kA, kB)
     T = __typVrcholu(M, kA, kB)
     D = __vahaStupneVrcholu(N, alpha)
-    G = __maticeAffiliaci(k, D)
+    G = __maticeAffiliaci(k, D, M)
+    
+    return G
     
     
 def __vyrobClenstvi(N, kA, kB):
@@ -48,5 +50,9 @@ def __vahaStupneVrcholu(N, alpha):
     return [powerLaw(alpha) for i in range(N)]
 
 
-def __maticeAffiliaci(numComs, nodeWeights):
-    G = [[w if c == com else 0 for w, c in zip(nodeWeights, com)] for com in range(numComs)]
+def __maticeAffiliaci(numComs, nodeWeights, nodeMemberships):
+    return [[w if m == com else 0 for w, m in zip(nodeWeights, nodeMemberships)] for com in range(numComs)]
+
+
+if __name__ == '__main__':
+    VyrobBipartitniZadani(10, np.array([[0, 1, 0], [1, 0, 1]]))
