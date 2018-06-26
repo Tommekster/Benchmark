@@ -3,12 +3,12 @@ Created on 4. 6. 2018
 
 @author: Tom
 '''
-from model import * #Model, BipartitniModel
+from benchmark.model import Model, BipartitniModel
 
 
 class Zadani(object):
     '''
-    classdocs
+    Obsahuje model jako zadani pro generator grafu
     '''
 
     def __init__(self, model : Model):

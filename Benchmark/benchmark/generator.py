@@ -3,7 +3,7 @@ Created on 4. 6. 2018
 
 @author: Tom
 '''
-from Zadani import Zadani, BipartitniZadani
+from benchmark.zadani import Zadani, BipartitniZadani
 
 class Generator(object):
     '''

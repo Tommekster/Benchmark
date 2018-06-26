@@ -4,11 +4,11 @@ Created on 5. 6. 2018
 @author: Tom
 '''
 import numpy as np
-import benchmark.model
+import benchmark.model as model
 from benchmark.powerLaw import powerLaw
 
 
-def VyrobBipartitniZadani(N, C : np.ndarray, alpha=2.1, mu=2):
+def VyrobBipartitniModel(N, C : np.ndarray, alpha=2.1, mu=2):
     """
     Parametry:
     N : pocet vrcholu
@@ -25,8 +25,10 @@ def VyrobBipartitniZadani(N, C : np.ndarray, alpha=2.1, mu=2):
     T = __typVrcholu(M, kA, kB)
     D = __vahaStupneVrcholu(N, alpha)
     G = __maticeAffiliaci(k, D, M)
+    A,B = __rozdelAffiliace(T, kA, kB, G)
+    A,B,C = __prevedNaNumPy(A,B,C)
     
-    return G
+    return model.BipartitniModel(A, B, C)
     
     
 def __vyrobClenstvi(N, kA, kB):
@@ -47,12 +49,26 @@ def __typVrcholu(M, kA, kB):
 
 
 def __vahaStupneVrcholu(N, alpha):
-    return [powerLaw(alpha) for i in range(N)]
+    return [powerLaw(alpha)*N for i in range(N)]
 
 
 def __maticeAffiliaci(numComs, nodeWeights, nodeMemberships):
     return [[w if m == com else 0 for w, m in zip(nodeWeights, nodeMemberships)] for com in range(numComs)]
+    
 
+def __rozdelAffiliace(nodeTypes,numComsA,numComsB,maticeAffiliaci):
+    numNodesA = sum([1 for t in nodeTypes if t == 0])
+    numNodesB = sum([1 for t in nodeTypes if t == 1])
+    A = [[maticeAffiliaci[r][i] for i in range(numNodesA)] for r in range(numComsA)]
+    B = [[maticeAffiliaci[r][i] for i in range(numNodesA,numNodesA+numNodesB)] 
+         for r in range(numComsA,numComsA+numComsB)]
+    return A,B
+    
+def __prevedNaNumPy(A,B,C):
+    AA = np.array(A)
+    BB = np.array(B)
+    CC = np.array(C)
+    return AA,BB,CC
 
 if __name__ == '__main__':
-    VyrobBipartitniZadani(10, np.array([[0, 1, 0], [1, 0, 1]]))
+    VyrobBipartitniModel(10, np.array([[0, 1, 0], [1, 0, 1]]))
