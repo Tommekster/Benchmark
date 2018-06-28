@@ -53,7 +53,7 @@ class BipartitniModel(Model):
         '''
         kA, nA = A.shape
         kB, nB = B.shape
-        assert(C.shape[0] == kA & C.shape[1] == kB)
+        assert(C.shape[0] == kA and C.shape[1] == kB)
         
         G = np.zeros((kA + kB, nA + nB))
         G[0:kA, 0:nA] = A

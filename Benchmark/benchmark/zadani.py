@@ -11,15 +11,16 @@ class Zadani(object):
     Obsahuje model jako zadani pro generator grafu
     '''
 
-    def __init__(self, model : Model):
+    def __init__(self, model : Model, count : int=1):
         '''
         Constructor
         '''
         self.model = model
+        self.count = count
 
         
 class BipartitniZadani(Zadani):
     
-    def __init__(self, model : BipartitniModel):
+    def __init__(self, model : BipartitniModel, count : int=1):
         
-        super().__init__(model)
+        Zadani.__init__(self,model, count)
