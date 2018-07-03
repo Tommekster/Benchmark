@@ -17,10 +17,7 @@ class Zadani(object):
         '''
         self.model = model
         self.count = count
-
         
-class BipartitniZadani(Zadani):
-    
-    def __init__(self, model : BipartitniModel, count : int=1):
-        
-        Zadani.__init__(self,model, count)
+    def getModels(self):
+        for cnt in range(self.count):
+            yield self.model

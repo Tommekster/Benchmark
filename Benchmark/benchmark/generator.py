@@ -3,7 +3,8 @@ Created on 4. 6. 2018
 
 @author: Tom
 '''
-from benchmark.zadani import Zadani, BipartitniZadani
+from benchmark.zadani import Zadani
+from benchmark.model import Model
 import numpy as np
 import networkx as nx
 
@@ -13,25 +14,30 @@ class Generator(object):
     classdocs
     '''
 
-    def __init__(self, zadani : Zadani):
+    def __init__(self, zadaniNeboModel):
         '''
         Constructor
         '''
-        self.zadani = zadani
+        if type(zadaniNeboModel) == Zadani:
+            self.zadani = zadaniNeboModel
+        elif type(zadaniNeboModel) == Model:
+            self.zadani = Zadani(zadaniNeboModel, count=1)
+        else: raise NotImplementedError()
         
     def __call__(self) -> nx.Graph:
-        return self.generate()
+        for model in self.zadani.getModels():
+            yield self.generate(model)
         
-    def generate(self):
-        weights = self.__vyrobVahy()
+    def generate(self, model):
+        weights = self.__vyrobVahy(model)
         graph = self.__generuj(weights)
-        comsLabels = self.__getCommunityLabels()
+        comsLabels = self.__getCommunityLabels(model)
         nx.set_node_attributes(graph, comsLabels, 'community')
         return graph
         
-    def __vyrobVahy(self):
-        groups = self.zadani.model.G
-        behavior = self.zadani.model.omega
+    def __vyrobVahy(self, model):
+        groups = model.G
+        behavior = model.omega
         return groups.transpose().dot(behavior).dot(groups)
     
     def __generuj(self, weights : np.array) -> nx.Graph:
@@ -45,29 +51,29 @@ class Generator(object):
                     G.add_edge(i + 1, j + 1)
         return G
     
-    def __getCommunityLabels(self):
+    def __getCommunityLabels(self, model):
         coms = {}
-        for n in range(self.zadani.model.get_num_nodes()):
-            coms[n+1]=str(self.zadani.model.getCommunities(n))
+        for n in range(model.get_num_nodes()):
+            coms[n + 1] = str(model.getCommunities(n))
         return coms
     
         
 class BipartitniGenerator(Generator):
     
-    def __init__(self, zadani : BipartitniZadani):
-        super().__init__(zadani)
+    def __init__(self, zadaniNeboModel):
+        super().__init__(zadaniNeboModel)
         
-    def generate(self) -> nx.Graph:
-        G = Generator.generate(self)
-        positions = self.__getNodePositions()
-        nx.set_node_attributes(G,positions,'viz')
+    def generate(self, model) -> nx.Graph:
+        G = Generator.generate(self, model)
+        positions = self.__getNodePositions(model)
+        nx.set_node_attributes(G, positions, 'viz')
         return G
     
-    def __getNodePositions(self):
+    def __getNodePositions(self, model):
         viz = {}
-        nums = [0,0]
-        for n in range(self.zadani.model.get_num_nodes()):
-            t = self.zadani.model.GetNodeType(n)
-            viz[n+1] = {'position':{'x':nums[t]*10.0,'y':1000.0*t}}
+        nums = [0, 0]
+        for n in range(model.get_num_nodes()):
+            t = model.GetNodeType(n)
+            viz[n + 1] = {'position':{'x':nums[t] * 10.0, 'y':1000.0 * t}}
             nums[t] += 1
         return viz
