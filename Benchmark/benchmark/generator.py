@@ -24,7 +24,10 @@ class Generator(object):
         
     def generate(self):
         weights = self.__vyrobVahy()
-        return self.__generuj(weights)
+        graph = self.__generuj(weights)
+        comsLabels = self.__getCommunityLabels()
+        nx.set_node_attributes(graph, comsLabels, 'community')
+        return graph
         
     def __vyrobVahy(self):
         groups = self.zadani.model.G
@@ -42,6 +45,12 @@ class Generator(object):
                     G.add_edge(i + 1, j + 1)
         return G
     
+    def __getCommunityLabels(self):
+        coms = {}
+        for n in range(self.zadani.model.get_num_nodes()):
+            coms[n+1]=str(self.zadani.model.getCommunities(n))
+        return coms
+    
         
 class BipartitniGenerator(Generator):
     
@@ -50,6 +59,15 @@ class BipartitniGenerator(Generator):
         
     def generate(self) -> nx.Graph:
         G = Generator.generate(self)
-        for n in G.nodes:
-            print(n)
+        positions = self.__getNodePositions()
+        nx.set_node_attributes(G,positions,'viz')
         return G
+    
+    def __getNodePositions(self):
+        viz = {}
+        nums = [0,0]
+        for n in range(self.zadani.model.get_num_nodes()):
+            t = self.zadani.model.GetNodeType(n)
+            viz[n+1] = {'position':{'x':nums[t]*10.0,'y':1000.0*t}}
+            nums[t] += 1
+        return viz

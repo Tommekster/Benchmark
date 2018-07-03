@@ -5,11 +5,11 @@ Created on 5. 6. 2018
 '''
 import numpy as np
 
+
 class Model(object):
     '''
     classdocs
     '''
-
 
     def __init__(self, G : np.ndarray, omega : np.ndarray):
         '''
@@ -22,11 +22,31 @@ class Model(object):
         self.omega = omega 
         
         self.__LoadNumsFromMatrix(G)
+
+    def get_num_coms(self):
+        return self.__numComs
+
+
+    def get_num_nodes(self):
+        return self.__numNodes
+
+    numComs = property(get_num_coms, None, None, None)
+    numNodes = property(get_num_nodes, None, None, None)
+        
+    def getCommunities(self, node : int):
+        return (self.getMaxCommunity(node),)
+        
+    def getMaxCommunity(self, node : int) -> int:
+        ''' returns number of community with maximal node's membership '''
+        memerships = self.G[:,node]
+        return np.argmax(memerships)
         
     def __LoadNumsFromMatrix(self, G : np.ndarray):
-        self.numComs, self.numNodes = self.G.shape
+        self.__numComs, self.__numNodes = self.G.shape
+
         
 class BipartitniModel(Model):
+
     def __init__(self, A : np.ndarray, B : np.ndarray, C : np.ndarray):
         '''
         Parametry:
@@ -46,6 +66,29 @@ class BipartitniModel(Model):
         super().__init__(G, omega)
         
         self.__LoadNumsFromMatrices(A, B)
+
+    def get_num_coms_type_a(self):
+        return self.__numComsTypeA
+
+
+    def get_num_nodes_type_a(self):
+        return self.__numNodesTypeA
+
+
+    def get_num_coms_type_b(self):
+        return self.__numComsTypeB
+
+
+    def get_num_nodes_type_b(self):
+        return self.__numNodesTypeB
+
+    numComsTypeA = property(get_num_coms_type_a, None, None, None)
+    numNodesTypeA = property(get_num_nodes_type_a, None, None, None)
+    numComsTypeB = property(get_num_coms_type_b, None, None, None)
+    numNodesTypeB = property(get_num_nodes_type_b, None, None, None)
+        
+    def GetNodeType(self, node : int) -> int:
+        return 0 if node < self.A.shape[1] else 1
         
     def ConvertModel(self, A : np.ndarray, B : np.ndarray, C : np.ndarray):
         '''
@@ -65,6 +108,6 @@ class BipartitniModel(Model):
         
         return G, omega
     
-    def __LoadNumsFromMatrices(self,  A : np.ndarray, B : np.ndarray):
-        self.numComsTypeA, self.numNodesTypeA = A.shape
-        self.numComsTypeB, self.numNodesTypeB = B.shape
+    def __LoadNumsFromMatrices(self, A : np.ndarray, B : np.ndarray):
+        self.__numComsTypeA, self.__numNodesTypeA = A.shape
+        self.__numComsTypeB, self.__numNodesTypeB = B.shape
