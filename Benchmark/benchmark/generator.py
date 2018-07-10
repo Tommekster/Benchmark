@@ -25,8 +25,7 @@ class Generator(object):
         else: raise NotImplementedError()
         
     def __call__(self) -> nx.Graph:
-        for model in self.zadani.getModels():
-            yield self.generate(model)
+        return [self.generate(model) for model in self.zadani.getModels()]
         
     def generate(self, model):
         weights = self.__vyrobVahy(model)

@@ -22,8 +22,8 @@ def GrafBezPrekryvuIzolovane():
     model = Model(G, omega)
     zadani = Zadani(model)
     generator = Generator(zadani)
-    graf = generator()
-    nx.write_gexf(graf, 'bezPreryvuIzolovane.gexf')
+    graf = generator()[0]
+    nx.write_gexf(graf, 'bezPrekryvuIzolovane.gexf')
 
     
 def GrafBezPrekryvu():
@@ -46,10 +46,11 @@ def BipartitniGrafBezPrekryvu():
     model = VyrobBipartitniModel(100, np.array([[0, 1, 0], [1, 0, 1]]))
     zadani = Zadani(model)
     generator = BipartitniGenerator(zadani)
-    graf = generator()
-    nx.write_gexf(graf, 'zkouskaGrafu.gexf')
+    graf = generator()[0]
+    nx.write_gexf(graf, 'bipartitniBezPrekryvu.gexf')
 
 
 if __name__ == '__main__':
-    # BipartitniGrafBezPrekryvu()
+    GrafBezPrekryvuIzolovane()
     GrafBezPrekryvu()
+    BipartitniGrafBezPrekryvu()

@@ -49,7 +49,7 @@ def __typVrcholu(M, kA, kB):
 
 
 def __vahaStupneVrcholu(N, alpha):
-    return [powerLaw(alpha) * N for i in range(N)]
+    return [powerLaw(alpha) for i in range(N)]
 
 
 def __maticeAffiliaci(numComs, nodeWeights, nodeMemberships):

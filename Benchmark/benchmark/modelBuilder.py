@@ -88,7 +88,7 @@ class ModelBuilder(object):
         
     def _getNodeDegrees(self):
         N = self._nodesCount
-        degrees = [powerLaw(self._alpha) * N for i in range(N)]
+        degrees = [powerLaw(self._alpha) for i in range(N)]
         return degrees
     
     def _getMemberships(self):
