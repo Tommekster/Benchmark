@@ -10,6 +10,7 @@ from benchmark.model import Model
 from benchmark.generator import BipartitniGenerator, Generator
 import numpy as np
 import networkx as nx
+from benchmark.modelBuilder import ModelBuilder
     
     
 def GrafBezPrekryvuIzolovane():
@@ -39,8 +40,17 @@ def GrafBezPrekryvu():
     zadani = Zadani(model)
     generator = Generator(zadani)
     for graf in generator(): break
-    nx.write_gexf(graf, 'bezPreryvu.gexf')
+    nx.write_gexf(graf, 'bezPrekryvu.gexf')
+    
 
+def GrafSPrekryvem():
+    N = 100
+    mb = ModelBuilder(N)#.addCommunities(3, range(N))
+    mb.addCommunity(range(70)).addCommunity(range(30,100))
+    model = mb.getModel()
+    generator = Generator(model)
+    for graf in generator(): break
+    nx.write_gexf(graf, 'sPrekryvem.gexf')
     
 def BipartitniGrafBezPrekryvu():
     model = VyrobBipartitniModel(100, np.array([[0, 1, 0], [1, 0, 1]]))
@@ -53,4 +63,5 @@ def BipartitniGrafBezPrekryvu():
 if __name__ == '__main__':
     GrafBezPrekryvuIzolovane()
     GrafBezPrekryvu()
+    GrafSPrekryvem()
     BipartitniGrafBezPrekryvu()
