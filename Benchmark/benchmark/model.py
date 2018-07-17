@@ -33,8 +33,15 @@ class Model(object):
     numComs = property(get_num_coms, None, None, None)
     numNodes = property(get_num_nodes, None, None, None)
         
-    def getCommunities(self, node : int):
-        return (self.getMaxCommunity(node),)
+    def getCommunities(self, node : int, edgesNum : int = None):
+        # treshold epsilon community podle 4.2.3 v BP
+        if edgesNum:
+            n = self.get_num_nodes()
+            m = edgesNum
+            treshold = 2*m/n/(n-1)
+        else: treshold = 0 # np.mean(self.G)*0.1
+        memberships = self.G[:,node]
+        return tuple([n for n,v in enumerate(memberships) if v > treshold])
         
     def getMaxCommunity(self, node : int) -> int:
         ''' returns number of community with maximal node's membership '''
