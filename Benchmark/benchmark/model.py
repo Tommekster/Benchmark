@@ -26,27 +26,28 @@ class Model(object):
     def get_num_coms(self):
         return self.__numComs
 
-
     def get_num_nodes(self):
         return self.__numNodes
 
     numComs = property(get_num_coms, None, None, None)
     numNodes = property(get_num_nodes, None, None, None)
         
-    def getCommunities(self, node : int, edgesNum : int = None):
+    def getCommunities(self, node : int, edgesNum : int=None):
         # treshold epsilon community podle 4.2.3 v BP
         if edgesNum:
             n = self.get_num_nodes()
             m = edgesNum
-            treshold = 2*m/n/(n-1)
-        else: treshold = 0 # np.mean(self.G)*0.1
-        memberships = self.G[:,node]
-        return tuple([n for n,v in enumerate(memberships) if v > treshold])
+            treshold = 2 * m / n / (n - 1)
+        else: treshold = 0  # np.mean(self.G)*0.1
+        memberships = self.G[:, node]
+        return tuple([n for n, v in enumerate(memberships) if v > treshold])
         
     def getMaxCommunity(self, node : int) -> int:
         ''' returns number of community with maximal node's membership '''
-        memerships = self.G[:,node]
-        return np.argmax(memerships)
+        memberships = self.G[:, node]
+        maxcomm = np.argmax(memberships)
+        if memberships[maxcomm] == 0: return -1
+        return maxcomm
         
     def __LoadNumsFromMatrix(self, G : np.ndarray):
         self.__numComs, self.__numNodes = self.G.shape
@@ -77,14 +78,11 @@ class BipartitniModel(Model):
     def get_num_coms_type_a(self):
         return self.__numComsTypeA
 
-
     def get_num_nodes_type_a(self):
         return self.__numNodesTypeA
 
-
     def get_num_coms_type_b(self):
         return self.__numComsTypeB
-
 
     def get_num_nodes_type_b(self):
         return self.__numNodesTypeB
