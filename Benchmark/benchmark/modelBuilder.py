@@ -38,7 +38,7 @@ class ModelBuilder(object):
         self._communities.append(dict(mu=mu, force=force, nodes=list(nodes)))
         return self
     
-    def addCommunities(self, count, nodes, mu=0, force=1):
+    def addCommunities(self, count, mu=0, force=1):
         N = self._nodesCount
         membership = [np.random.randint(count) for n in range(N)]
         for K in range(count):
