@@ -22,12 +22,13 @@ def GrafBezPrekryvuIzolovane():
     membership = [np.random.randint(K) for n in range(N)]
     G = np.array([[int(membership[n] == k) for n in range(N)] for k in range(K)])
     model = Model(G, omega)
+    saveMembers(model, 'coms.bezPrekryvuIzolovane.txt')
     zadani = Zadani(model)
     generator = Generator(zadani)
     graf = generator()[0]
     nx.write_gexf(graf, 'bezPrekryvuIzolovane.gexf')
 
-    
+
 def GrafBezPrekryvu():
     ''' Trochu propojene komunity: mu = 0.2 '''
     mu = 0.2
@@ -38,17 +39,19 @@ def GrafBezPrekryvu():
     membership = [np.random.randint(K) for n in range(N)]
     G = np.array([[int(membership[n] == k) for n in range(N)] for k in range(K)])
     model = Model(G, omega)
+    saveMembers(model, 'coms.bezPrekryvu.txt')
     zadani = Zadani(model)
     generator = Generator(zadani)
     for graf in generator(): break
     nx.write_gexf(graf, 'bezPrekryvu.gexf')
-    
+
 
 def GrafSPrekryvem():
     N = 100
     mb = ModelBuilder(N)  # .addCommunities(3, range(N))
     mb.addCommunity(range(70)).addCommunity(range(30, 100))
     model = mb.getModel()
+    saveMembers(model, 'coms.sPrekryvem.txt')
     generator = Generator(model)
     for graf in generator(): break
     nx.write_gexf(graf, 'sPrekryvem.gexf')
@@ -59,13 +62,15 @@ def GrafSVolnymiVrcholy():
     mb = ModelBuilder(N)  # .addCommunities(3, range(N))
     mb.addCommunity(range(40)).addCommunity(range(60, 100))
     model = mb.getModel()
+    saveMembers(model, 'coms.sVolnymi.txt')
     generator = Generator(model)
     for graf in generator(): break
     nx.write_gexf(graf, 'sVolnymi.gexf')
 
-    
+
 def BipartitniGrafBezPrekryvu():
     model = VyrobBipartitniModel(100, np.array([[0, 1, 0], [1, 0, 1]]))
+    saveMembers(model, 'coms.bipartitniBezPrekryvu.txt')
     zadani = Zadani(model)
     generator = BipartitniGenerator(zadani)
     graf = generator()[0]
@@ -84,12 +89,20 @@ def BipartitniGrafSPrekryvem():
     builder.addCommunityRelation(1, 1)
     builder.addCommunityRelation(1, 2)
     model = builder.getModel()
+    saveMembers(model, 'coms.bipartitniSPrekryvem.txt')
     zadani = Zadani(model)
     generator = BipartitniGenerator(zadani)
     graf = generator()[0]
     nx.write_gexf(graf, 'bipartitniSPrekryvem.gexf')
 
+def saveMembers(model: Model, filename):
+    coms = model.get_num_coms()
+    with open(filename,'w') as f:
+        for c in range(coms):
+            f.write('\t'.join([str(n+1) for n in model.getMembers(c)])+'\n')
+
 if __name__ == '__main__':
+    pass
     GrafBezPrekryvuIzolovane()
     GrafBezPrekryvu()
     GrafSPrekryvem()

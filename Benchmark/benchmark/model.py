@@ -43,6 +43,11 @@ class Model(object):
         maxcomm = np.argmax(memberships)
         if memberships[maxcomm] == 0: return -1
         return maxcomm
+    
+    def getMembers(self, community : int, edgesNum = None):
+        treshold = self.__getMembershipTreshold(edgesNum)
+        memberships = self.G[community, :]
+        return tuple([n for n, v in enumerate(memberships) if v > treshold])
         
     def __LoadNumsFromMatrix(self, G : np.ndarray):
         self.__numComs, self.__numNodes = self.G.shape
