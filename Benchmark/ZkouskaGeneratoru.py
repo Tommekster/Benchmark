@@ -4,15 +4,16 @@ Created on 4. 6. 2018
 @author: Tom
 '''
 
-from benchmark.bipartitniModelCreator import VyrobBipartitniModel
-from benchmark.zadani import Zadani
-from benchmark.model import Model
-from benchmark.generator import BipartitniGenerator, Generator
-import numpy as np
-import networkx as nx
-from benchmark.modelBuilder import ModelBuilder
-from benchmark.bipartitniModelBuilder import BipartitniModelBuilder
 import os.path
+
+from benchmark.bipartitniModelBuilder import BipartitniModelBuilder
+from benchmark.bipartitniModelCreator import VyrobBipartitniModel
+from benchmark.generator import BipartitniGenerator, Generator
+from benchmark.model import Model
+from benchmark.modelBuilder import ModelBuilder
+from benchmark.zadani import Zadani
+import networkx as nx
+import numpy as np
 
 
 def GrafBezPrekryvuIzolovane():
@@ -96,14 +97,17 @@ def BipartitniGrafSPrekryvem():
     graf = generator()[0]
     nx.write_gexf(graf, output('bipartitniSPrekryvem.gexf'))
 
+
 def saveMembers(model: Model, filename):
     coms = model.get_num_coms()
-    with open(filename,'w') as f:
+    with open(filename, 'w') as f:
         for c in range(coms):
-            f.write('\t'.join([str(n+1) for n in model.getMembers(c)])+'\n')
+            f.write('\t'.join([str(n + 1) for n in model.getMembers(c)]) + '\n')
+
             
 def output(filename):
-    return os.path.join('output',filename)
+    return os.path.join('output', filename)
+
 
 if __name__ == '__main__':
     pass
