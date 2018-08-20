@@ -33,12 +33,7 @@ class Model(object):
     numNodes = property(get_num_nodes, None, None, None)
         
     def getCommunities(self, node : int, edgesNum : int=None):
-        # treshold epsilon community podle 4.2.3 v BP
-        if edgesNum:
-            n = self.get_num_nodes()
-            m = edgesNum
-            treshold = 2 * m / n / (n - 1)
-        else: treshold = 0  # np.mean(self.G)*0.1
+        treshold = self.__getMembershipTreshold(edgesNum)
         memberships = self.G[:, node]
         return tuple([n for n, v in enumerate(memberships) if v > treshold])
         
@@ -51,6 +46,16 @@ class Model(object):
         
     def __LoadNumsFromMatrix(self, G : np.ndarray):
         self.__numComs, self.__numNodes = self.G.shape
+        
+    def __getMembershipTreshold(self, edgesNum :int = None):
+        # treshold epsilon community podle 4.2.3 v BP
+        if edgesNum:
+            n = self.get_num_nodes()
+            m = edgesNum
+            treshold = 2 * m / n / (n - 1)
+        else: treshold = 0  # np.mean(self.G)*0.1
+        return treshold
+        
 
         
 class BipartitniModel(Model):

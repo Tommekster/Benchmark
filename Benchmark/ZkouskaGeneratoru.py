@@ -11,8 +11,9 @@ from benchmark.generator import BipartitniGenerator, Generator
 import numpy as np
 import networkx as nx
 from benchmark.modelBuilder import ModelBuilder
-    
-    
+from benchmark.bipartitniModelBuilder import BipartitniModelBuilder
+
+
 def GrafBezPrekryvuIzolovane():
     ''' komunity jsou komponenty souvislosti: mu = 0 '''
     K = 3
@@ -71,9 +72,27 @@ def BipartitniGrafBezPrekryvu():
     nx.write_gexf(graf, 'bipartitniBezPrekryvu.gexf')
 
 
+def BipartitniGrafSPrekryvem():
+    builder = BipartitniModelBuilder((50, 50))
+    builder.addCommunityA(range(30))
+    builder.addCommunityA(range(20, 50))
+    builder.addCommunityB(range(20))
+    builder.addCommunityB(range(15, 35))
+    builder.addCommunityB(range(30, 50))
+    builder.addCommunityRelation(0, 0)
+    builder.addCommunityRelation(0, 1)
+    builder.addCommunityRelation(1, 1)
+    builder.addCommunityRelation(1, 2)
+    model = builder.getModel()
+    zadani = Zadani(model)
+    generator = BipartitniGenerator(zadani)
+    graf = generator()[0]
+    nx.write_gexf(graf, 'bipartitniSPrekryvem.gexf')
+
 if __name__ == '__main__':
     GrafBezPrekryvuIzolovane()
     GrafBezPrekryvu()
     GrafSPrekryvem()
     GrafSVolnymiVrcholy()
     BipartitniGrafBezPrekryvu()
+    BipartitniGrafSPrekryvem()

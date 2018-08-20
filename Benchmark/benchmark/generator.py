@@ -66,6 +66,8 @@ class BipartitniGenerator(Generator):
         G = Generator.generate(self, model)
         positions = self.__getNodePositions(model)
         nx.set_node_attributes(G, positions, 'viz')
+        types = {n+1: model.GetNodeType(n) for n in range(model.get_num_nodes())}
+        nx.set_node_attributes(G, types, 'type')
         return G
     
     def __getNodePositions(self, model):
@@ -73,6 +75,6 @@ class BipartitniGenerator(Generator):
         nums = [0, 0]
         for n in range(model.get_num_nodes()):
             t = model.GetNodeType(n)
-            viz[n + 1] = {'position':{'x':nums[t] * 10.0, 'y':1000.0 * t}}
+            viz[n + 1] = {'position':{'x':nums[t] * 10.0, 'y':1000.0 * t, 'z':0.0}}
             nums[t] += 1
         return viz

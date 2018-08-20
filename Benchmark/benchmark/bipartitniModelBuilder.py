@@ -23,7 +23,7 @@ class BipartitniModelBuilder(object):
         self._communities = ([],[])
         self._communityRelations = []
         
-    def setNodesCount(self, nodesCount : int):
+    def setNodesCount(self, nodesCount : tuple):
         self._nodesCount = nodesCount
         return self
     
@@ -55,18 +55,18 @@ class BipartitniModelBuilder(object):
         return self
     
     def addCommunityRelation(self, communityA, communityB, force = 1):
-        self._communityRelations.append(communityA, communityB, force)
+        self._communityRelations.append((communityA, communityB, force))
     
     def getModel(self) -> BipartitniModel:
         A,B = self._getGroupMatrices()
-        C = self._getCommunityMatrix() # TODO getCommunityMatrix
+        C = self._getCommunityMatrix() 
         model = BipartitniModel(A, B, C)
         return model
     
-    def _getCommunityMatrix(self):
+    def _getCommunityMatrix(self): # TODO getCommunityMatrix
         Ka = len(self._communities[0])
         Kb = len(self._communities[1])
-        C = np.zeros(Ka, Kb)
+        C = np.zeros((Ka, Kb))
         for r in self._communityRelations: C[r[0],r[1]] = r[2]
         return C
         
@@ -74,13 +74,13 @@ class BipartitniModelBuilder(object):
         degrees = self._getNodeDegrees()
         nodeForces = self._getNodeForces()
         N = self._nodesCount
-        K = (len(self._communities[t]) for t in range(2))
+        K = [len(self._communities[t]) for t in range(2)]
         Na = N[0]        
         Ka = K[0]
-        groups = (np.array([[nodeForces(n+t*Na, c+t*Ka) * d 
+        groups = [np.array([[nodeForces(n+t*Na, c+t*Ka) * d 
                    for n, d in zip(range(N[t]), degrees[t])]
                     for c in range(K[t])])
-                    for t in range(2))
+                    for t in range(2)]
         return groups
             
     def _getNodeForces(self):
@@ -105,7 +105,7 @@ class BipartitniModelBuilder(object):
         
     def _getNodeDegrees(self):
         N = self._nodesCount
-        degrees = ([powerLaw(self._alpha) for i in range(N[t])] for t in range(2))
+        degrees = [[powerLaw(self._alpha) for i in range(N[t])] for t in range(2)]
         return degrees
     
     def _getMemberships(self):
