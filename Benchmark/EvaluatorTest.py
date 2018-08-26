@@ -9,6 +9,7 @@ import networkx as nx
 from benchmark.model import Model
 from benchmark.generator import Generator
 from remoteService.detectionWebService import DetectionWebService
+from benchmark.evaluator import Evaluator, MembershipsList
 
 def GrafWithoutOverlaps(mu = 0.2):
     ''' Trochu propojene komunity: mu = 0.2 '''
@@ -20,7 +21,7 @@ def GrafWithoutOverlaps(mu = 0.2):
     model = Model(groupMatrix, omega)
     generator = Generator(model)
     for graph in generator(): break
-    return graph
+    return graph, model
     #nx.write_gexf(graf, output('bezPrekryvu.gexf'))
     
 def appendMemberships(graph : nx.Graph, memberships, name = 'memberships'):
@@ -29,15 +30,19 @@ def appendMemberships(graph : nx.Graph, memberships, name = 'memberships'):
 
 if __name__ == '__main__':
     service = DetectionWebService()
-    graph = GrafWithoutOverlaps()
+    graph, model = GrafWithoutOverlaps()
     
     bigClam = service.bigClam(graph)
-    louvain = service.louvain(graph)
-    olapSBMmax, olapSBM = service.olapSBM(graph,10,10)
+    #louvain = service.louvain(graph)
+    #olapSBMmax, olapSBM = service.olapSBM(graph,10,10)
     
-    appendMemberships(graph, bigClam, 'bigCLAM')
-    appendMemberships(graph, louvain, 'louvain')
-    appendMemberships(graph, olapSBM, 'olapSBM')
-    appendMemberships(graph, olapSBMmax, 'olapSBMmax')
+    evaluator = Evaluator(MembershipsList(model.getMemberships()), MembershipsList(bigClam))
+    evaluation = evaluator.evaluate()
+    print(evaluation)
     
-    nx.write_gexf(graph, 'output/serviceTest.gexf')
+    #appendMemberships(graph, bigClam, 'bigCLAM')
+    #appendMemberships(graph, louvain, 'louvain')
+    #appendMemberships(graph, olapSBM, 'olapSBM')
+    #appendMemberships(graph, olapSBMmax, 'olapSBMmax')
+    
+    #nx.write_gexf(graph, 'output/serviceTest.gexf')

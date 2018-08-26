@@ -18,8 +18,8 @@ class Evaluator(object):
         '''
         Constructor
         '''
-        self.original = original
-        self.detected = detected
+        self.__original = original
+        self.__detected = detected
 
     def get_original(self):
         return self.__original
@@ -30,7 +30,7 @@ class Evaluator(object):
     def __call__(self):
         return self.compare()
     
-    def compare(self):
+    def evaluate(self):
         aggregated = self._aggregate(self.get_original(), self.get_detected())
         aggregatedAndOriginal = self._jaccard(self.get_original(), aggregated)
         selfOriginal = self._selfJaccard(self.get_original())
@@ -82,7 +82,8 @@ class Evaluator(object):
         return float(len(As & Bs)) / len(As | Bs)
         
     def _frobenius(self, A, B):
-        pass
+        X = A - B 
+        return np.sqrt(np.sum([x*x for x in X.flat]))
 
     original = property(get_original, None, None, "original community membership list")
     detected = property(get_detected, None, None, "detected detected membership list")
