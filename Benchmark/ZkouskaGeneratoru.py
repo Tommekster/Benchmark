@@ -35,7 +35,6 @@ def GrafWithoutOverlaps():
     ''' Trochu propojene komunity: mu = 0.2 '''
     mu = 0.2
     K = 3
-    omega = np.eye(K, K)
     omega = np.array([[1 - mu, mu, 0], [mu, 1 - 2 * mu, mu], [0, mu, 1 - mu]])
     N = 100
     membership = [np.random.randint(K) for _ in range(N)]
@@ -99,10 +98,10 @@ def BipartitniGrafSPrekryvem():
 
 
 def saveMembers(model: Model, filename):
-    coms = model.get_num_coms()
+    memberships = model.getMemberships()
     with open(filename, 'w') as f:
-        for c in range(coms):
-            f.write('\t'.join([str(n + 1) for n in model.getMembers(c)]) + '\n')
+        for M in memberships:
+            f.write('\t'.join([str(n) for n in M]) + '\n')
 
             
 def output(filename):
