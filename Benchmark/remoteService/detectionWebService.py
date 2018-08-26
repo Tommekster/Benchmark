@@ -28,6 +28,10 @@ class DetectionWebService(object):
         nodes = self._getNodes(graph)
         return self.proxy.louvain(nodes, edges)
     
+    def olapSBM(self, graph : nx.Graph, maxComs = 10, runsPerNetwork = 20):
+        edges = self._getEdges(graph)
+        return self.proxy.olapSBM(edges, maxComs, runsPerNetwork)
+    
     def _getEdges(self, graph : nx.Graph):
         return list(graph.edges)
     

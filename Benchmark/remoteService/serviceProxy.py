@@ -22,6 +22,7 @@ class JSONRPCException(Exception):
 
     def __init__(self, rpcError):
         Exception.__init__(self)
+        print(rpcError)
         self.error = rpcError
 
         
