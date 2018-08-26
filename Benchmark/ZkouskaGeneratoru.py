@@ -21,7 +21,7 @@ def GrafBezPrekryvuIzolovane():
     K = 3
     omega = np.eye(K, K)
     N = 100
-    membership = [np.random.randint(K) for n in range(N)]
+    membership = [np.random.randint(K) for _ in range(N)]
     G = np.array([[int(membership[n] == k) for n in range(N)] for k in range(K)])
     model = Model(G, omega)
     saveMembers(model, output('coms.bezPrekryvuIzolovane.txt'))
@@ -31,14 +31,14 @@ def GrafBezPrekryvuIzolovane():
     nx.write_gexf(graf, output('bezPrekryvuIzolovane.gexf'))
 
 
-def GrafBezPrekryvu():
+def GrafWithoutOverlaps():
     ''' Trochu propojene komunity: mu = 0.2 '''
     mu = 0.2
     K = 3
     omega = np.eye(K, K)
     omega = np.array([[1 - mu, mu, 0], [mu, 1 - 2 * mu, mu], [0, mu, 1 - mu]])
     N = 100
-    membership = [np.random.randint(K) for n in range(N)]
+    membership = [np.random.randint(K) for _ in range(N)]
     G = np.array([[int(membership[n] == k) for n in range(N)] for k in range(K)])
     model = Model(G, omega)
     saveMembers(model, output('coms.bezPrekryvu.txt'))
@@ -112,7 +112,7 @@ def output(filename):
 if __name__ == '__main__':
     pass
     GrafBezPrekryvuIzolovane()
-    GrafBezPrekryvu()
+    GrafWithoutOverlaps()
     GrafSPrekryvem()
     GrafSVolnymiVrcholy()
     BipartitniGrafBezPrekryvu()
