@@ -33,10 +33,11 @@ if __name__ == '__main__':
     
     bigClam = service.bigClam(graph)
     louvain = service.louvain(graph)
-    olapSBM = service.olapSBM(graph)
+    olapSBMmax, olapSBM = service.olapSBM(graph,10,10)
     
     appendMemberships(graph, bigClam, 'bigCLAM')
     appendMemberships(graph, louvain, 'louvain')
     appendMemberships(graph, olapSBM, 'olapSBM')
+    appendMemberships(graph, olapSBMmax, 'olapSBMmax')
     
     nx.write_gexf(graph, 'output/serviceTest.gexf')
