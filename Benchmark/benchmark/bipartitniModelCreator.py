@@ -3,9 +3,9 @@ Created on 5. 6. 2018
 
 @author: Tom
 '''
-import numpy as np
 import benchmark.model as model
 from benchmark.powerLaw import powerLaw
+import numpy as np
 
 
 def VyrobBipartitniModel(N, C : np.ndarray, alpha=2.1, mu=2):

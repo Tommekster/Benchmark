@@ -3,10 +3,11 @@ Created on 4. 6. 2018
 
 @author: Tom
 '''
-from benchmark.zadani import Zadani
-from benchmark.model import Model
-import numpy as np
+
 import networkx as nx
+import numpy as np
+
+from .zadani import *
 
 
 class Generator(object):
@@ -20,7 +21,7 @@ class Generator(object):
         '''
         if type(zadaniNeboModel) == Zadani:
             self.zadani = zadaniNeboModel
-        elif type(zadaniNeboModel) == Model:
+        elif type(zadaniNeboModel) in (Model, BipartitniModel):
             self.zadani = Zadani(zadaniNeboModel, count=1)
         else: raise NotImplementedError()
         
@@ -66,7 +67,7 @@ class BipartitniGenerator(Generator):
         G = Generator.generate(self, model)
         positions = self.__getNodePositions(model)
         nx.set_node_attributes(G, positions, 'viz')
-        types = {n+1: model.GetNodeType(n) for n in range(model.get_num_nodes())}
+        types = {n + 1: model.GetNodeType(n) for n in range(model.get_num_nodes())}
         nx.set_node_attributes(G, types, 'type')
         return G
     

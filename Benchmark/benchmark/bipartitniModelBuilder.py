@@ -4,8 +4,8 @@ Created on 8. 7. 2018
 @author: Tomáš
 '''
 
-from benchmark.powerLaw import powerLaw
 from benchmark.model import BipartitniModel
+from benchmark.powerLaw import powerLaw
 import numpy as np
 
 
@@ -14,13 +14,13 @@ class BipartitniModelBuilder(object):
     A tool for simplier model creation. 
     '''
 
-    def __init__(self, nodesCount : tuple = (50, 50)):
+    def __init__(self, nodesCount : tuple=(50, 50)):
         '''
         Constructor
         '''
         self.setNodesCount(nodesCount)
         self.setDegreeAlpha(2.1)
-        self._communities = ([],[])
+        self._communities = ([], [])
         self._communityRelations = []
         
     def setNodesCount(self, nodesCount : tuple):
@@ -54,20 +54,20 @@ class BipartitniModelBuilder(object):
                               mu, force)
         return self
     
-    def addCommunityRelation(self, communityA, communityB, force = 1):
+    def addCommunityRelation(self, communityA, communityB, force=1):
         self._communityRelations.append((communityA, communityB, force))
     
     def getModel(self) -> BipartitniModel:
-        A,B = self._getGroupMatrices()
+        A, B = self._getGroupMatrices()
         C = self._getCommunityMatrix() 
         model = BipartitniModel(A, B, C)
         return model
     
-    def _getCommunityMatrix(self): # TODO getCommunityMatrix
+    def _getCommunityMatrix(self):  # TODO getCommunityMatrix
         Ka = len(self._communities[0])
         Kb = len(self._communities[1])
         C = np.zeros((Ka, Kb))
-        for r in self._communityRelations: C[r[0],r[1]] = r[2]
+        for r in self._communityRelations: C[r[0], r[1]] = r[2]
         return C
         
     def _getGroupMatrices(self):
@@ -77,7 +77,7 @@ class BipartitniModelBuilder(object):
         K = [len(self._communities[t]) for t in range(2)]
         Na = N[0]        
         Ka = K[0]
-        groups = [np.array([[nodeForces(n+t*Na, c+t*Ka) * d 
+        groups = [np.array([[nodeForces(n + t * Na, c + t * Ka) * d 
                    for n, d in zip(range(N[t]), degrees[t])]
                     for c in range(K[t])])
                     for t in range(2)]
@@ -101,6 +101,7 @@ class BipartitniModelBuilder(object):
             if (node, community) in nodeForces:
                 return nodeForces[(node, community)]
             else: return 0
+
         return nodeForcesCall
         
     def _getNodeDegrees(self):
@@ -112,12 +113,11 @@ class BipartitniModelBuilder(object):
         Na = self._nodesCount[0]
         Ka = len(self._communities[0])
         nodes = []
-        for t in range(2): nodes.extend([n+t*Na for C in self._communities[t] for n in C['nodes']])
+        for t in range(2): nodes.extend([n + t * Na for C in self._communities[t] for n in C['nodes']])
         memberships = {n: [] for n in nodes}
         for t in range(2):
             for c, C in enumerate(self._communities[t]):
                 for n in C['nodes']:
-                    memberships[n+t*Na].append(dict(community=c+t*Ka, force=C['force']))
+                    memberships[n + t * Na].append(dict(community=c + t * Ka, force=C['force']))
         return memberships
-        
     

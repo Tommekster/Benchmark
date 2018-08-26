@@ -4,8 +4,8 @@ Created on 8. 7. 2018
 @author: Tomáš
 '''
 
-from benchmark.powerLaw import powerLaw
 from benchmark.model import Model
+from benchmark.powerLaw import powerLaw
 import numpy as np
 
 
@@ -84,6 +84,7 @@ class ModelBuilder(object):
             if (node, community) in nodeForces:
                 return nodeForces[(node, community)]
             else: return 0
+
         return nodeForcesCall
         
     def _getNodeDegrees(self):
@@ -98,5 +99,4 @@ class ModelBuilder(object):
             for n in C['nodes']:
                 memberships[n].append(dict(community=c, force=C['force']))
         return memberships
-        
     

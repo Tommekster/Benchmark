@@ -4,9 +4,8 @@ Created on 26. 8. 2018
 @author: Tomáš
 '''
 
-import numpy as np
 from benchmark.membershipList import MembershipsList
-from sqlalchemy.ext.associationproxy import association_proxy
+import numpy as np
 
 
 class Evaluator(object):
@@ -83,7 +82,7 @@ class Evaluator(object):
         
     def _frobenius(self, A, B):
         X = A - B 
-        return np.sqrt(np.sum([x*x for x in X.flat]))
+        return np.sqrt(np.sum([x * x for x in X.flat]))
 
     original = property(get_original, None, None, "original community membership list")
     detected = property(get_detected, None, None, "detected detected membership list")

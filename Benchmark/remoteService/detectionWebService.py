@@ -5,15 +5,15 @@ Created on 26. 8. 2018
 '''
 
 import networkx as nx
-from remoteService.serviceProxy import ServiceProxy
+from .serviceProxy import ServiceProxy
+
 
 class DetectionWebService(object):
     '''
     classdocs
     '''
 
-
-    def __init__(self, url = "http://localhost:8100/jsonrpc"):
+    def __init__(self, url="http://localhost:8100/jsonrpc"):
         '''
         Constructor
         '''
@@ -28,7 +28,7 @@ class DetectionWebService(object):
         nodes = self._getNodes(graph)
         return self.proxy.louvain(nodes, edges)
     
-    def olapSBM(self, graph : nx.Graph, maxComs = 10, runsPerNetwork = 20):
+    def olapSBM(self, graph : nx.Graph, maxComs=10, runsPerNetwork=20):
         edges = self._getEdges(graph)
         return self.proxy.olapSBM(edges, maxComs, runsPerNetwork)
     

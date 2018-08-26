@@ -3,7 +3,7 @@ Created on 4. 6. 2018
 
 @author: Tom
 '''
-from benchmark.model import Model, BipartitniModel
+from .model import Model, BipartitniModel
 
 
 class Zadani(object):
@@ -19,5 +19,5 @@ class Zadani(object):
         self.count = count
         
     def getModels(self):
-        for cnt in range(self.count):
+        for _ in range(self.count):
             yield self.model
