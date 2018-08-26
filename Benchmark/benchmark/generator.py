@@ -19,9 +19,9 @@ class Generator(object):
         '''
         Constructor
         '''
-        if type(zadaniNeboModel) == Zadani:
+        if isinstance(zadaniNeboModel, Zadani):
             self.zadani = zadaniNeboModel
-        elif type(zadaniNeboModel) in (Model, BipartitniModel):
+        elif isinstance(zadaniNeboModel, Model):
             self.zadani = Zadani(zadaniNeboModel, count=1)
         else: raise NotImplementedError()
         

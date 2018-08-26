@@ -3,7 +3,7 @@ Created on 4. 6. 2018
 
 @author: Tom
 '''
-from .model import Model, BipartitniModel
+from .model import Model
 
 
 class Zadani(object):
