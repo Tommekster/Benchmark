@@ -31,9 +31,9 @@ class Evaluator(object):
     
     def evaluate(self):
         aggregated = self._aggregate(self.get_original(), self.get_detected())
-        aggregatedAndOriginal = self._jaccard(self.get_original(), aggregated)
+        selfAggregated = self._selfJaccard(aggregated)
         selfOriginal = self._selfJaccard(self.get_original())
-        return self._frobenius(aggregatedAndOriginal, selfOriginal)
+        return self._frobenius(selfAggregated, selfOriginal)
     
     def _aggregate(self, original : MembershipsList, detected : MembershipsList):
         matches = [self._bestMatch(m, original) for m in detected.getMemberships()]
