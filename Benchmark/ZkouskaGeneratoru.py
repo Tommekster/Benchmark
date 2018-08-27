@@ -8,7 +8,7 @@ import os.path
 
 from benchmark.bipartitniModelBuilder import BipartitniModelBuilder
 from benchmark.bipartitniModelCreator import VyrobBipartitniModel
-from benchmark.generator import BipartitniGenerator, Generator
+from benchmark.generator import Generator
 from benchmark.model import Model
 from benchmark.modelBuilder import ModelBuilder
 from benchmark.zadani import Zadani
@@ -26,8 +26,7 @@ def GrafBezPrekryvuIzolovane():
     model = Model(G, omega)
     saveMembers(model, output('coms.bezPrekryvuIzolovane.txt'))
     zadani = Zadani(model)
-    generator = Generator(zadani)
-    graf = generator()[0]
+    graf = Generator(zadani).next()
     nx.write_gexf(graf, output('bezPrekryvuIzolovane.gexf'))
 
 
@@ -42,8 +41,7 @@ def GrafWithoutOverlaps():
     model = Model(G, omega)
     saveMembers(model, output('coms.bezPrekryvu.txt'))
     zadani = Zadani(model)
-    generator = Generator(zadani)
-    for graf in generator(): break
+    graf = Generator(zadani).next()
     nx.write_gexf(graf, output('bezPrekryvu.gexf'))
 
 
@@ -53,8 +51,7 @@ def GrafSPrekryvem():
     mb.addCommunity(range(70)).addCommunity(range(30, 100))
     model = mb.getModel()
     saveMembers(model, output('coms.sPrekryvem.txt'))
-    generator = Generator(model)
-    for graf in generator(): break
+    graf = Generator(model).next()
     nx.write_gexf(graf, output('sPrekryvem.gexf'))
 
 
@@ -64,8 +61,7 @@ def GrafSVolnymiVrcholy():
     mb.addCommunity(range(40)).addCommunity(range(60, 100))
     model = mb.getModel()
     saveMembers(model, output('coms.sVolnymi.txt'))
-    generator = Generator(model)
-    for graf in generator(): break
+    graf = Generator(model).next()
     nx.write_gexf(graf, output('sVolnymi.gexf'))
 
 
@@ -73,8 +69,7 @@ def BipartitniGrafBezPrekryvu():
     model = VyrobBipartitniModel(100, np.array([[0, 1, 0], [1, 0, 1]]))
     saveMembers(model, output('coms.bipartitniBezPrekryvu.txt'))
     zadani = Zadani(model)
-    generator = BipartitniGenerator(zadani)
-    graf = generator()[0]
+    graf = Generator(zadani).next()
     nx.write_gexf(graf, output('bipartitniBezPrekryvu.gexf'))
 
 
@@ -92,8 +87,7 @@ def BipartitniGrafSPrekryvem():
     model = builder.getModel()
     saveMembers(model, output('coms.bipartitniSPrekryvem.txt'))
     zadani = Zadani(model)
-    generator = BipartitniGenerator(zadani)
-    graf = generator()[0]
+    graf = Generator(zadani).next()
     nx.write_gexf(graf, output('bipartitniSPrekryvem.gexf'))
 
 

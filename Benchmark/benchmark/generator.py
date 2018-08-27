@@ -27,7 +27,14 @@ class Generator(object):
         else: raise NotImplementedError()
         
     def __call__(self) -> list:
-        return [self.generate(model) for model in self.zadani.getModels()]
+        return [graph for graph in self]
+    
+    def __iter__(self):
+        return (self.generate(model) for model in self.zadani.getModels())
+    
+    def next(self):
+        for graph in self: break
+        return graph
         
     def generate(self, model):
         weights = self.__vyrobVahy(model)
