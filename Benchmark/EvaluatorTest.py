@@ -47,24 +47,41 @@ def appendMemberships(graph : nx.Graph, memberships, name='memberships'):
 
 
 if __name__ == '__main__':
+    print('Packages loaded')
     service = DetectionWebService()
-    #graph, model = GrafWithoutOverlaps()
-    graph, model = BipartiteGraphWithoutOverlaps()
+    graph, model = GrafWithoutOverlaps()
+    #graph, model = BipartiteGraphWithoutOverlaps()
     
-    #bigClam = service.bigClam(graph)
-    # louvain = service.louvain(graph)
-    # olapSBMmax, olapSBM = service.olapSBM(graph,10,10)
+    bigClam = service.bigClam(graph)
+    louvain = service.louvain(graph)
+    olapSBMmax, olapSBM = service.olapSBM(graph,10,10)
     biSBM = service.biSBM(graph)
     
-    evaluator = Evaluator(model.getMemberships(), biSBM)
-    evaluation = evaluator.evaluate()
-    print(evaluation)
-    
-    # appendMemberships(graph, bigClam, 'bigCLAM')
-    # appendMemberships(graph, louvain, 'louvain')
-    # appendMemberships(graph, olapSBM, 'olapSBM')
-    # appendMemberships(graph, olapSBMmax, 'olapSBMmax')
+    appendMemberships(graph, bigClam, 'bigCLAM')
+    appendMemberships(graph, louvain, 'louvain')
+    appendMemberships(graph, olapSBM, 'olapSBM')
+    appendMemberships(graph, olapSBMmax, 'olapSBMmax')
     appendMemberships(graph, biSBM, 'biSBM')
     
-    nx.write_gexf(graph, 'output/serviceTest.gexf')
+    nx.write_gexf(graph, 'output/evaluatorTest.gexf')
+    
+    selfEvaluator = Evaluator(model.getMemberships(), model.getMemberships())
+    selfEvaluation = selfEvaluator.evaluate()
+    print(selfEvaluation)
+    with open('output/WOO.self.eval.txt','w') as f: f.write(str(selfEvaluation)+'\n')
+    
+    evaluator = Evaluator(model.getMemberships(), olapSBM)
+    evaluation = evaluator.evaluate()
+    print(evaluation)
+    with open('output/WOO.oSBM.eval.txt','w') as f: f.write(str(evaluation)+'\n')
+    evaluator.plot.comparison('output/WOO.oSBM.cmp.jac.png')
+    evaluator.plot.comparison('output/WOO.oSBM.cmp.frc.png',True)
+    evaluator.plot.aggregated('output/WOO.oSBM.agr.jac.png')
+    evaluator.plot.aggregated('output/WOO.oSBM.agr.frc.png',True)
+    evaluator.plot.selfAggregated('output/WOO.oSBM.sagr.jac.png')
+    evaluator.plot.selfAggregated('output/WOO.oSBM.sagr.frc.png',True)
+    evaluator.plot.selfOriginal('output/WOO.oSBM.sorg.jac.png')
+    evaluator.plot.selfOriginal('output/WOO.oSBM.sorg.frc.png',True)
+    evaluator.plot.selfDetected('output/WOO.oSBM.sdet.jac.png')
+    evaluator.plot.selfDetected('output/WOO.oSBM.sdet.frc.png',True)
     
