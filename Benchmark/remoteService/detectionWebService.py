@@ -19,9 +19,9 @@ class DetectionWebService(object):
         '''
         self.proxy = ServiceProxy(url)
         
-    def bigClam(self, graph : nx.Graph):
+    def bigClam(self, graph : nx.Graph, comsNum=-1):
         edges = self._getEdges(graph)
-        return self.proxy.bigClam(edges)
+        return self.proxy.bigClam(edges, comsNum)
     
     def louvain(self, graph : nx.Graph):
         edges = self._getEdges(graph)
