@@ -1,0 +1,6 @@
+{'graph': 'bezPrekryvuIzolovane.gexf', 'evaluations': {'bigClam': 0.0, 'louvain': 0.0, 'olapSBMmax': 0.0, 'olapSBM': 0.0, 'biSBM': 0.0}}
+{'graph': 'bezPrekryvu.gexf', 'evaluations': {'bigClam': 0.0, 'louvain': 0.0, 'olapSBMmax': 0.0, 'olapSBM': 0.09143904728343645, 'biSBM': 0.0}}
+{'graph': 'sPrekryvem.gexf', 'evaluations': {'bigClam': 0.23932844901698533, 'louvain': 0.5656854249492381, 'olapSBMmax': 0.5656854249492381, 'olapSBM': 0.32750208812850623, 'biSBM': 0.5656854249492381}}
+{'graph': 'sVolnymi.gexf', 'evaluations': {'bigClam': 0.0, 'louvain': 0.0, 'olapSBMmax': 0.0, 'olapSBM': 0.0, 'biSBM': 0.0}}
+{'graph': 'bipartitniBezPrekryvu.gexf', 'evaluations': {'bigClam': 2.0, 'louvain': 1.7320508075688772, 'olapSBMmax': 0.0, 'olapSBM': 1.4142135623730951, 'biSBM': 0.0}}
+{'graph': 'bipartitniSPrekryvem.gexf', 'evaluations': {'bigClam': 1.7570138101603763, 'louvain': 1.7780980437144698, 'olapSBMmax': 0.40203563655629393, 'olapSBM': 0.49159684112733326, 'biSBM': 0.40203563655629393}}

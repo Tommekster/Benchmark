@@ -14,6 +14,8 @@ from benchmark.modelBuilder import ModelBuilder
 from benchmark.zadani import Zadani
 import networkx as nx
 import numpy as np
+from remoteService.detectionWebService import DetectionWebService
+from benchmark.evaluator import Evaluator
 
 
 def GrafBezPrekryvuIzolovane():
@@ -24,35 +26,26 @@ def GrafBezPrekryvuIzolovane():
     membership = [np.random.randint(K) for _ in range(N)]
     G = np.array([[int(membership[n] == k) for n in range(N)] for k in range(K)])
     model = Model(G, omega)
-    saveMembers(model, output('coms.bezPrekryvuIzolovane.txt'))
-    zadani = Zadani(model)
-    graf = Generator(zadani).next()
-    nx.write_gexf(graf, output('bezPrekryvuIzolovane.gexf'))
+    generateDetectAndSave(model, 'bezPrekryvuIzolovane.gexf')
 
 
-def GrafWithoutOverlaps():
+def GrafWithoutOverlaps(mu=0.2):
     ''' Trochu propojene komunity: mu = 0.2 '''
-    mu = 0.2
     K = 3
     omega = np.array([[1 - mu, mu, 0], [mu, 1 - 2 * mu, mu], [0, mu, 1 - mu]])
     N = 100
     membership = [np.random.randint(K) for _ in range(N)]
     G = np.array([[int(membership[n] == k) for n in range(N)] for k in range(K)])
     model = Model(G, omega)
-    saveMembers(model, output('coms.bezPrekryvu.txt'))
-    zadani = Zadani(model)
-    graf = Generator(zadani).next()
-    nx.write_gexf(graf, output('bezPrekryvu.gexf'))
+    generateDetectAndSave(model, 'bezPrekryvu.gexf')
 
 
 def GrafSPrekryvem():
     N = 100
-    mb = ModelBuilder(N)  # .addCommunities(3, range(N))
-    mb.addCommunity(range(70)).addCommunity(range(30, 100))
-    model = mb.getModel()
-    saveMembers(model, output('coms.sPrekryvem.txt'))
-    graf = Generator(model).next()
-    nx.write_gexf(graf, output('sPrekryvem.gexf'))
+    builder = ModelBuilder(N)  # .addCommunities(3, range(N))
+    builder.addCommunity(range(70)).addCommunity(range(30, 100))
+    model = builder.getModel()
+    generateDetectAndSave(model, 'sPrekryvem.gexf')
 
 
 def GrafSVolnymiVrcholy():
@@ -60,17 +53,12 @@ def GrafSVolnymiVrcholy():
     mb = ModelBuilder(N)  # .addCommunities(3, range(N))
     mb.addCommunity(range(40)).addCommunity(range(60, 100))
     model = mb.getModel()
-    saveMembers(model, output('coms.sVolnymi.txt'))
-    graf = Generator(model).next()
-    nx.write_gexf(graf, output('sVolnymi.gexf'))
+    generateDetectAndSave(model, 'sVolnymi.gexf')
 
 
 def BipartitniGrafBezPrekryvu():
     model = VyrobBipartitniModel(100, np.array([[0, 1, 0], [1, 0, 1]]))
-    saveMembers(model, output('coms.bipartitniBezPrekryvu.txt'))
-    zadani = Zadani(model)
-    graf = Generator(zadani).next()
-    nx.write_gexf(graf, output('bipartitniBezPrekryvu.gexf'))
+    generateDetectAndSave(model, 'bipartitniBezPrekryvu.gexf')
 
 
 def BipartitniGrafSPrekryvem():
@@ -85,25 +73,52 @@ def BipartitniGrafSPrekryvem():
     builder.addCommunityRelation(1, 1)
     builder.addCommunityRelation(1, 2)
     model = builder.getModel()
-    saveMembers(model, output('coms.bipartitniSPrekryvem.txt'))
-    zadani = Zadani(model)
-    graf = Generator(zadani).next()
-    nx.write_gexf(graf, output('bipartitniSPrekryvem.gexf'))
+    generateDetectAndSave(model, 'bipartitniSPrekryvem.gexf')
 
 
-def saveMembers(model: Model, filename):
-    memberships = model.getMemberships()
-    with open(filename, 'w') as f:
-        for M in memberships:
-            f.write('\t'.join([str(n) for n in M]) + '\n')
+service = DetectionWebService()
+
+    
+def generateDetectAndSave(model : Model, fileName):
+    graph = Generator(model).next()
+    
+    olapSBMmax, olapSBM = service.olapSBM(graph, 6, 50)
+    memberships = dict(
+        bigClam=service.bigClam(graph),
+        louvain=service.louvain(graph),
+        olapSBMmax=olapSBMmax, olapSBM=olapSBM,
+        biSBM=service.biSBM(graph)
+    )
+    
+    evaluations = dict()
+    for method in memberships:
+        appendMemberships(graph, memberships[method], method)
+        evaluations[method] = Evaluator(model.getMemberships(), memberships[method]).evaluate()
+        
+    record = dict(graph=fileName, evaluations=evaluations)
+    recordEvaluation(record)
+    
+    nx.write_gexf(graph, output(fileName))
+
+    
+def clearEvaluationFile():
+    with open(output('evaluation.txt'), 'w') as _: pass
+
+    
+def recordEvaluation(record : dict):
+    with open(output('evaluation.txt'), 'a') as f: f.write('{}\n'.format(str(record)))
 
             
 def output(filename):
     return os.path.join('output', filename)
 
+    
+def appendMemberships(graph : nx.Graph, memberships, name='memberships'):
+    communities = {n: str([c + 1 for c, ms in enumerate(memberships) if n in ms]) for n in graph.nodes}
+    nx.set_node_attributes(graph, communities, name)
+
 
 if __name__ == '__main__':
-    pass
     GrafBezPrekryvuIzolovane()
     GrafWithoutOverlaps()
     GrafSPrekryvem()
