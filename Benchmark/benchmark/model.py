@@ -45,7 +45,7 @@ class Model(object):
         return maxcomm
     
     def getMemberships(self, edgesNum=None):
-        return [[str(n + 1) for n in self.getMembers(c, edgesNum)] for c in range(self.get_num_coms())]
+        return [[(n + 1) for n in self.getMembers(c, edgesNum)] for c in range(self.get_num_coms())]
     
     def getMembers(self, community : int, edgesNum=None):
         treshold = self.__getMembershipTreshold(edgesNum)

@@ -86,7 +86,7 @@ class Evaluator(object):
     def _transposeMatches(self, matches : list, outComsCount : int) -> list:
         transposed = [[] for c in range(outComsCount)]
         for c, m in enumerate(matches):
-            if m: transposed[m].append(c)
+            if m is not None: transposed[m].append(c)
         return transposed
         
     def _compare(self, original : MembershipsList, detected : MembershipsList, metricsFcn : callable) -> np.ndarray:
@@ -142,7 +142,7 @@ class EvaluatorPlotter(object):
         
     def aggregated(self, filename, fraction=False, ordered=True):
         aggregated = self.__parent.aggregate()
-        getMatrix = lambda a, b: self.__parent.fraction(a, b) if fraction else self.__parent.jaccard(a, b)
+        getMatrix = (lambda a, b: self.__parent.fraction(a, b)) if fraction else (lambda a,b: self.__parent.jaccard(a, b))
         matrix = getMatrix(self.__parent.get_original(), aggregated)
         self._plotOrderedMatrix(matrix, filename, ordered)
         
