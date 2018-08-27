@@ -17,8 +17,8 @@ class Evaluator(object):
         '''
         Constructor
         '''
-        self.__original = original
-        self.__detected = detected
+        self.__original = original if isinstance(original, MembershipsList) else MembershipsList(original)
+        self.__detected = detected if isinstance(detected, MembershipsList) else MembershipsList(detected)
 
     def get_original(self):
         return self.__original

@@ -4,8 +4,7 @@ Created on 26. 8. 2018
 @author: Tomáš
 '''
 
-from benchmark import Model, Generator, Evaluator, MembershipList
-from benchmark.generator import Generator
+from benchmark import Model, Generator, BipartitniGenerator, Evaluator, BipartitniModelBuilder
 import networkx as nx
 import numpy as np
 from remoteService import DetectionWebService
@@ -22,6 +21,25 @@ def GrafWithoutOverlaps(mu=0.2):
     generator = Generator(model)
     for graph in generator(): break
     return graph, model
+
+
+def BipartiteGraphWithoutOverlaps():
+    builder = BipartitniModelBuilder((60,40))
+    builder.addCommunityA(range(20))
+    builder.addCommunityA(range(20, 40))
+    builder.addCommunityA(range(40, 60))
+    builder.addCommunityB(range(20))
+    builder.addCommunityB(range(20,40))
+    builder.addCommunityRelation(1, 0)
+    builder.addCommunityRelation(0, 1)
+    builder.addCommunityRelation(2, 1)
+    model = builder.getModel()
+    # model = VyrobBipartitniModel(100, np.array([[0, 1, 0], [1, 0, 1]]))
+    generator = BipartitniGenerator(model)
+    graf = generator()[0]
+    return graf, model
+    # nx.write_gexf(graf, output('bipartitniBezPrekryvu.gexf'))
+
     
 def appendMemberships(graph : nx.Graph, memberships, name='memberships'):
     communities = {n: str([c + 1 for c, ms in enumerate(memberships) if n in ms]) for n in graph.nodes}
@@ -30,13 +48,15 @@ def appendMemberships(graph : nx.Graph, memberships, name='memberships'):
 
 if __name__ == '__main__':
     service = DetectionWebService()
-    graph, model = GrafWithoutOverlaps()
+    #graph, model = GrafWithoutOverlaps()
+    graph, model = BipartiteGraphWithoutOverlaps()
     
-    bigClam = service.bigClam(graph)
+    #bigClam = service.bigClam(graph)
     # louvain = service.louvain(graph)
     # olapSBMmax, olapSBM = service.olapSBM(graph,10,10)
+    biSBM = service.biSBM(graph)
     
-    evaluator = Evaluator(MembershipsList(model.getMemberships()), MembershipsList(bigClam))
+    evaluator = Evaluator(model.getMemberships(), biSBM)
     evaluation = evaluator.evaluate()
     print(evaluation)
     
@@ -44,5 +64,7 @@ if __name__ == '__main__':
     # appendMemberships(graph, louvain, 'louvain')
     # appendMemberships(graph, olapSBM, 'olapSBM')
     # appendMemberships(graph, olapSBMmax, 'olapSBMmax')
+    appendMemberships(graph, biSBM, 'biSBM')
     
-    # nx.write_gexf(graph, 'output/serviceTest.gexf')
+    nx.write_gexf(graph, 'output/serviceTest.gexf')
+    

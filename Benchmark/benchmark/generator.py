@@ -25,7 +25,7 @@ class Generator(object):
             self.zadani = Zadani(zadaniNeboModel, count=1)
         else: raise NotImplementedError()
         
-    def __call__(self) -> nx.Graph:
+    def __call__(self) -> list:
         return [self.generate(model) for model in self.zadani.getModels()]
         
     def generate(self, model):
