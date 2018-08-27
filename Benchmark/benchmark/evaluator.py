@@ -155,7 +155,7 @@ class EvaluatorPlotter(object):
         self._plotSelfMemberships(filename, memberships, fraction, ordered)
         
     def selfDetected(self, filename, fraction=False, ordered=True):
-        memberships = self.__parent.get_original()
+        memberships = self.__parent.get_detected()
         self._plotSelfMemberships(filename, memberships, fraction, ordered)
         
     def _plotSelfMemberships(self, filename, memberships : MembershipsList, fraction=False, ordered=False):
