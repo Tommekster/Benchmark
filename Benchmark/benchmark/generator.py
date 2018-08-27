@@ -8,6 +8,7 @@ import networkx as nx
 import numpy as np
 
 from .zadani import *
+from benchmark.model import BipartitniModel
 
 
 class Generator(object):
@@ -33,6 +34,11 @@ class Generator(object):
         graph = self.__generuj(weights)
         comsLabels = self.__getCommunityLabels(model)
         nx.set_node_attributes(graph, comsLabels, 'community')
+        if isinstance(model, BipartitniModel):
+            positions = self.__getNodePositions(model)
+            nx.set_node_attributes(graph, positions, 'viz')
+            types = {n + 1: model.GetNodeType(n) for n in range(model.get_num_nodes())}
+            nx.set_node_attributes(graph, types, 'type')
         return graph
         
     def __vyrobVahy(self, model):
@@ -42,7 +48,7 @@ class Generator(object):
     
     def __generuj(self, weights : np.array) -> nx.Graph:
         G = nx.Graph()
-        N, NN = weights.shape
+        N, _ = weights.shape
         for i in range(N):
             G.add_node(i + 1, node_index=i)
         for i in range(N):
@@ -57,20 +63,6 @@ class Generator(object):
             coms[n + 1] = str(model.getCommunities(n))
         return coms
     
-        
-class BipartitniGenerator(Generator):
-    
-    def __init__(self, zadaniNeboModel):
-        super().__init__(zadaniNeboModel)
-        
-    def generate(self, model) -> nx.Graph:
-        G = Generator.generate(self, model)
-        positions = self.__getNodePositions(model)
-        nx.set_node_attributes(G, positions, 'viz')
-        types = {n + 1: model.GetNodeType(n) for n in range(model.get_num_nodes())}
-        nx.set_node_attributes(G, types, 'type')
-        return G
-    
     def __getNodePositions(self, model):
         viz = {}
         nums = [0, 0]
@@ -79,3 +71,6 @@ class BipartitniGenerator(Generator):
             viz[n + 1] = {'position':{'x':nums[t] * 10.0, 'y':1000.0 * t, 'z':0.0}}
             nums[t] += 1
         return viz
+    
+        
+BipartitniGenerator = Generator
