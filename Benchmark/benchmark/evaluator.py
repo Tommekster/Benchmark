@@ -90,7 +90,7 @@ class Evaluator(object):
         return transposed
         
     def _compare(self, original : MembershipsList, detected : MembershipsList, metricsFcn : callable) -> np.ndarray:
-        matrix = np.zeros((original.getCommunityCount(), detected.getCommunityCount()))
+        matrix = np.zeros((detected.getCommunityCount(), original.getCommunityCount()))
         for dci in detected.getCommunities():
             detectedMembersSet = set(detected.getCommunityMembers(dci))
             for oci in original.getCommunities():
@@ -100,7 +100,8 @@ class Evaluator(object):
     def _setJaccard(self, A, B):
         As = set(A)
         Bs = set(B)
-        return float(len(As & Bs)) / len(As | Bs)
+        denom = len(As | Bs)
+        return float(len(As & Bs)) / denom if denom > 0 else 0
     
     def _setFraction(self, A, B):
         As = set(A)
@@ -113,7 +114,7 @@ class Evaluator(object):
     
     def _computeNodes(self):
         nodes = set()    
-        coms = self.get_original().getCommunities() + self.get_detected().getCommunities()
+        coms = self.get_original().getMemberships() + self.get_detected().getMemberships()
         for c in coms: nodes |= set(c)
         self.__nodesCount = len(nodes)
 
