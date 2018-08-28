@@ -119,9 +119,9 @@ def appendMemberships(graph : nx.Graph, memberships, name='memberships'):
 
 
 if __name__ == '__main__':
-    GrafBezPrekryvuIzolovane()
-    GrafWithoutOverlaps()
-    GrafSPrekryvem()
-    GrafSVolnymiVrcholy()
-    BipartitniGrafBezPrekryvu()
-    BipartitniGrafSPrekryvem()
+    GrafBezPrekryvuIzolovane()  # mu0
+    GrafWithoutOverlaps()       # 0mu2
+    GrafSPrekryvem()            # olap
+    GrafSVolnymiVrcholy()       # free
+    BipartitniGrafBezPrekryvu() # biWoO
+    BipartitniGrafSPrekryvem()  # biWO
