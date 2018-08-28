@@ -36,8 +36,12 @@ class Evaluator(object):
     def __call__(self):
         return self.compare()
     
-    def evaluate(self):
+    def evaluate(self, fraction=False):
         aggregated = self.aggregate(self.get_original(), self.get_detected())
+        if fraction:
+            selfAggregated = self.selfFraction(aggregated)
+            selfOriginal = self.selfFraction(self.get_original())
+            return self._frobenius(selfAggregated, selfOriginal)
         selfAggregated = self.selfJaccard(aggregated)
         selfOriginal = self.selfJaccard(self.get_original())
         return self._frobenius(selfAggregated, selfOriginal)
@@ -51,7 +55,7 @@ class Evaluator(object):
         return self._compare(original, detected, lambda a, b: self._setJaccard(a, b))
     
     def selfFraction(self, memberhips : MembershipsList) -> np.ndarray:
-        return self.jaccard(memberhips, memberhips)
+        return self.fraction(memberhips, memberhips)
     
     def fraction(self, original : MembershipsList=None, detected : MembershipsList=None) -> np.ndarray:
         if not original: original = self.get_original()
