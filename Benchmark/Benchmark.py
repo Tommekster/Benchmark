@@ -12,20 +12,20 @@ from benchmark.evaluator import Evaluator
 from benchmark.modelBuilder import ModelBuilder
 
 service = DetectionWebService()
-EVALUATION_FILE = 'output/benchmark.txt'
+EVALUATION_FILE = 'output/benchmark2.txt'
 GRAPHS_COUNT = 100
 
 
 def Benchmark():
     graphName = 'GraphModelWithoutOverlaps'
-    # mu_params = {0, 0.01, 0.1, 0.2}
-#     for mu in mu_params:
-#         model = GraphModelWithoutOverlaps(mu)
-#         TestMethod(graphName, model, mu=mu)
+    mu_params = {0, 0.01, 0.1, 0.2}
+    for mu in mu_params:
+        model = GraphModelWithoutOverlaps(mu)
+        TestMethod(graphName, model, mu=mu)
     graphName = 'GraphModelWithOverlaps'
-    params = [((50,50),6), ((50,50),10), ((50,50),20), ((30,60),6), ((30,60),10)]
+    params = [((50, 50), 6), ((50, 50), 10), ((50, 50), 20), ((30, 60), 6), ((30, 60), 10)]
     for P in params:
-        model = GraphModelWithOverlaps(P[0],P[1])
+        model = GraphModelWithOverlaps(P[0], P[1])
         TestMethod(graphName, model, sizes=P[0], common=P[1])
 
         
@@ -45,9 +45,9 @@ def TestMethod(graphName, model, **kwargs):
         
         evaluations = dict()
         for method in memberships:
-            evaluations[method] = Evaluator(model.getMemberships(), memberships[method]).evaluate()
+            evaluations[method] = Evaluator(model.getMemberships(), memberships[method]).evaluate(True)
             
-        record = dict(graph=graphName, params=kwargs, run=run, evaluations=evaluations)
+        record = dict(graph=graphName, params=kwargs, run=run, evaluations=evaluations, frac=True)
         recordEvaluation(record)
 
 
