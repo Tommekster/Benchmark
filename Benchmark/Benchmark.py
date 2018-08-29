@@ -10,6 +10,7 @@ from benchmark.generator import Generator
 from remoteService.detectionWebService import DetectionWebService
 from benchmark.evaluator import Evaluator
 from benchmark.modelBuilder import ModelBuilder
+from benchmark.bipartitniModelBuilder import BipartitniModelBuilder
 
 service = DetectionWebService()
 EVALUATION_FILE = 'output/benchmark2.txt'
@@ -27,7 +28,14 @@ def Benchmark():
     for P in params:
         model = GraphModelWithOverlaps(P[0], P[1])
         TestMethod(graphName, model, sizes=P[0], common=P[1])
-
+        
+    TestMethod('BipartiteGraphWithoutOverlapsModel', BipartiteGraphWithoutOverlapsModel())
+    TestMethod('TreeGraphModel', TreeGraphModel())
+    
+    params = [(0,0), (0,10), (0,16), (10,0), (10,10), (10,16), (20,0), (20,10), (20,16)]
+    for P in params:
+        model = BipartiteOverlappingGraphModel(P)
+        TestMethod('BipartiteOverlappingGraphModel', model, common=P)
         
 def TestMethod(graphName, model, **kwargs):
     print('>{}\n\tParams:{}'.format(graphName, str(kwargs)))
@@ -68,6 +76,57 @@ def GraphModelWithOverlaps(comSizes=(50, 50), commonNodes=20):
     C = int(commonNodes / 2)
     builder = ModelBuilder(N)
     builder.addCommunity(range(A + C)).addCommunity(range(N - B - C, N))
+    model = builder.getModel()
+    return model
+
+
+def BipartiteGraphWithoutOverlapsModel():
+    builder = BipartitniModelBuilder((60, 40))
+    builder.addCommunityA(range(20))
+    builder.addCommunityA(range(20, 40))
+    builder.addCommunityA(range(40, 60))
+    builder.addCommunityB(range(20))
+    builder.addCommunityB(range(20, 40))
+    builder.addCommunityRelation(0, 0)
+    builder.addCommunityRelation(1, 1)
+    builder.addCommunityRelation(2, 1)
+    model = builder.getModel()
+    return model
+
+
+def TreeGraphModel():
+    builder = BipartitniModelBuilder((80, 80))
+    builder.addCommunityA(range(20))
+    builder.addCommunityA(range(20, 40))
+    builder.addCommunityA(range(40, 60))
+    builder.addCommunityA(range(60, 80))
+    builder.addCommunityB(range(20))
+    builder.addCommunityB(range(20, 40))
+    builder.addCommunityB(range(40, 60))
+    builder.addCommunityB(range(60, 80))
+    builder.addCommunityRelation(0, 0)
+    builder.addCommunityRelation(0, 1)
+    builder.addCommunityRelation(0, 2)
+    builder.addCommunityRelation(1, 1)
+    builder.addCommunityRelation(1, 3)
+    builder.addCommunityRelation(2, 3)
+    builder.addCommunityRelation(3, 3)
+    model = builder.getModel()
+    return model
+
+
+def BipartiteOverlappingGraphModel(common=(10,10)):
+    C = [int(c / 2) for c in common]
+    builder = BipartitniModelBuilder((50, 90))
+    builder.addCommunityA(range(25 + C[0]))
+    builder.addCommunityA(range(25 - C[0], 50))
+    builder.addCommunityB(range(30))
+    builder.addCommunityB(range(30 - C[1], 60 + C[0]))
+    builder.addCommunityB(range(60, 90))
+    builder.addCommunityRelation(0, 0)
+    builder.addCommunityRelation(0, 1)
+    builder.addCommunityRelation(1, 1)
+    builder.addCommunityRelation(1, 2)
     model = builder.getModel()
     return model
 
