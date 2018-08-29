@@ -34,8 +34,9 @@ def EvaluateGEXF():
         
 def getMemberships(G, attribute):
     communities = {n: eval(G.node[n][attribute]) for n in G.nodes}
-    maxCom = max([c - 1 for n in communities for c in communities[n]])
-    memberships = [[n for n in communities if c + 1 in communities[n]] for c in range(maxCom + 1)]
+    maxCom = max([c for n in communities for c in communities[n]])
+    memberships = [[n for n in communities if c in communities[n]] for c in range(maxCom + 1)]
+    memberships = [M for M in memberships if len(M) > 0]
     return memberships
         
         
