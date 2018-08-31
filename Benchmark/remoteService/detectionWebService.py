@@ -45,10 +45,10 @@ class DetectionWebService(object):
         return self._bipartitePartitions(graph, partitions)
     
     def _getEdges(self, graph : nx.Graph):
-        return list(graph.edges)
+        return [(int(u),int(v)) for u,v in graph.edges]
     
     def _getNodes(self, graph : nx.Graph):
-        return list(graph.nodes)
+        return [int(n) for n in graph.nodes]
     
     def _getTypes(self, graph: nx.Graph):
         types = list(self.__generateTypes(graph))
@@ -62,8 +62,9 @@ class DetectionWebService(object):
             
     def _bipartitePartitions(self, graph:nx.Graph, partitions):
         typeSets = self.__nodeTypeSets(graph)
-        return [list(typeSet & set(P)) for P in partitions for typeSet in typeSets]
+        biPartitions = [list(typeSet & set(P)) for P in partitions for typeSet in typeSets]
+        return [P for P in biPartitions if len(P) > 0]
     
     def __nodeTypeSets(self, graph):
         types = self._getTypes(graph)
-        return [set([n + 1 for n, t in enumerate(types) if t == T]) for T in (1, 2)]
+        return [set([(n + 1) for n, t in enumerate(types) if t == T]) for T in (1, 2)]
