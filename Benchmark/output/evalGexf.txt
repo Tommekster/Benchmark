@@ -5,3 +5,10 @@
 {'graph': 'evaluatorTest', 'evalJac': {'bigClam': 0.0, 'louvain': 0.0, 'olapSBMmax': 0.0, 'olapSBM': 0.09143904728343645, 'biSBM': 0.0}, 'evalFrc': {'bigClam': 0.04582575694955842, 'louvain': 0.0, 'olapSBMmax': 0.0374165738677394, 'olapSBM': 0.05916079783099616, 'biSBM': 0.0}}
 {'graph': 'sPrekryvem', 'evalJac': {'bigClam': 0.23932844901698533, 'louvain': 0.5656854249492381, 'olapSBMmax': 0.5656854249492381, 'olapSBM': 0.32750208812850623, 'biSBM': 0.5656854249492381}, 'evalFrc': {'bigClam': 0.3340658617698013, 'louvain': 0.6326136261573885, 'olapSBMmax': 0.6401562309311689, 'olapSBM': 0.41048751503547587, 'biSBM': 0.6928203230275509}}
 {'graph': 'sVolnymi', 'evalJac': {'bigClam': 0.0, 'louvain': 0.0, 'olapSBMmax': 0.0, 'olapSBM': 0.0, 'biSBM': 0.0}, 'evalFrc': {'bigClam': 0.0, 'louvain': 0.0, 'olapSBMmax': 0.0, 'olapSBM': 0.012500000000000011, 'biSBM': 0.14764823060233398}}
+{'graph': 'bezPrekryvu', 'evaluation': {'louvain': 0.0, 'olapSBMmax': 0.028284271247461888, 'olapSBM': 0.1673320053068151, 'bigClam': 0.04582575694955842, 'biSBM': 0.0}}
+{'graph': 'bezPrekryvuIzolovane', 'evaluation': {'louvain': 0.0, 'olapSBMmax': 0.0, 'olapSBM': 0.12083045973594571, 'bigClam': 0.0, 'biSBM': 0.0}}
+{'graph': 'bipartiteWoO', 'evaluation': {'louvain': 0.28284271247461906, 'olapSBMmax': 0.09899494936611666, 'olapSBM': 0.16703293088490068, 'bigClam': 0.22022715545545243, 'biSBM': 0.09899494936611666}}
+{'graph': 'bipartitniBezPrekryvu', 'evaluation': {'louvain': 0.3111269837220809, 'olapSBMmax': 0.09899494936611662, 'olapSBM': 0.19974984355438177, 'bigClam': 0.387556447501522, 'biSBM': 0.21213203435596428}}
+{'graph': 'bipartitniSPrekryvem', 'evaluation': {'louvain': 0.3, 'olapSBMmax': 0.23748684174075835, 'olapSBM': 0.28513154858766504, 'bigClam': 0.3336165463522456, 'biSBM': 0.21213203435596428}}
+{'graph': 'sPrekryvem', 'evaluation': {'louvain': 0.6326136261573885, 'olapSBMmax': 0.6381222453417527, 'olapSBM': 0.04795831523312719, 'bigClam': 0.3340658617698013, 'biSBM': 0.6928203230275509}}
+{'graph': 'sVolnymi', 'evaluation': {'louvain': 0.0, 'olapSBMmax': 0.0, 'olapSBM': 0.012500000000000011, 'bigClam': 0.0, 'biSBM': 0.19999999999999996}}
