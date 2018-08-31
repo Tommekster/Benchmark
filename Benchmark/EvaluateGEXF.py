@@ -7,29 +7,45 @@ Created on 29. 8. 2018
 import networkx as nx
 import os
 from benchmark.evaluator import Evaluator
+from remoteService.detectionWebService import DetectionWebService
 
 EVALUATION_FILE = 'output/evalGexf.txt'
+service = DetectionWebService("http://localhost:8101/jsonrpc")
 
-def EvaluateGEXF():
+
+def EvaluateGEXF(useService=False):
     graphs = loadGraphs()
     for graph in graphs:
         G = getGraph(graph)
+        if useService:
+            memberships = detectMemberships(G)
+        else:
+            memberships = membershipsFromGEXF(G)
         original = getMemberships(G, 'community')
-        evalJac = dict(
-            bigClam=Evaluator(original,getMemberships(G, 'bigClam')).evaluate(),
-            louvain=Evaluator(original,getMemberships(G, 'louvain')).evaluate(),
-            olapSBMmax=Evaluator(original,getMemberships(G, 'olapSBMmax')).evaluate(), 
-            olapSBM=Evaluator(original,getMemberships(G, 'olapSBM')).evaluate(),
-            biSBM=Evaluator(original,getMemberships(G, 'biSBM')).evaluate()
-            )
-        evalFrc = dict(
-            bigClam=Evaluator(original,getMemberships(G, 'bigClam')).evaluate(True),
-            louvain=Evaluator(original,getMemberships(G, 'louvain')).evaluate(True),
-            olapSBMmax=Evaluator(original,getMemberships(G, 'olapSBMmax')).evaluate(True), 
-            olapSBM=Evaluator(original,getMemberships(G, 'olapSBM')).evaluate(True),
-            biSBM=Evaluator(original,getMemberships(G, 'biSBM')).evaluate(True)
-            )
-        recordEvaluation(dict(graph=graph,evalJac=evalJac,evalFrc=evalFrc))
+        evalFrc = evaluateMethods(original, memberships, True)
+        recordEvaluation(dict(graph=graph, evaluation=evalFrc))
+
+        
+def detectMemberships(graph:nx.Graph):
+    comsNum = None
+    comsBiNum = (None, None)
+            
+    olapSBMmax, olapSBM = service.olapSBM(graph, comsNum)
+    memberships = dict(
+        louvain=service.louvain(graph),
+        olapSBMmax=olapSBMmax, olapSBM=olapSBM,
+        bigClam=service.bigClam(graph, comsNum),
+        biSBM=service.biSBM(graph, comsBiNum[0], comsBiNum[1])
+    )
+    return memberships
+
+
+def membershipsFromGEXF(G:nx.Graph, methods=['community', 'louvain', 'olapSBMmax', 'olapSBM', 'bigClam', 'biSBM']):
+    return {method: getMemberships(G, method) for method in methods}
+
+        
+def evaluateMethods(original, memberships, useFraction=True):
+    return {method: Evaluator(original, memberships[method]).evaluate(useFraction) for method in memberships}
 
         
 def getMemberships(G, attribute):
@@ -58,4 +74,4 @@ def recordEvaluation(record : dict):
 
 
 if __name__ == '__main__':
-    EvaluateGEXF()
+    EvaluateGEXF(True)
