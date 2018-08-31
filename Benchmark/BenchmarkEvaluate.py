@@ -7,11 +7,13 @@ import json
 
 BENCHMARK_FILE = 'benchmark.txt'
 
-def BenchmarkEvaluate():
-    records = loadRecords(BENCHMARK_FILE)
+def BenchmarkEvaluate(inputFile, outputFile):
+    print(' '.join([inputFile, outputFile]))
+    records = loadRecords(inputFile)
     runs = groupBy(records, 'graph','params')
-    print(json.dumps(runs, indent=4))
-    #means = computeMean(runs, 'evaluations')
+    means = computeMeans(runs, 'evaluations')
+    #print(json.dumps(means, indent=4))
+    with open(outputFile,'w') as f: f.write(json.dumps(means, indent=4))
     #printResults(means)
     
 def loadRecords(file):
@@ -39,9 +41,28 @@ def groupBy(records, *nargs, keyAsTuple=True):
             g['values'] = groupBy(g['values'], *_keys)
     return output
 
-def computeMeans(runs, field):
-    #return (dict(graph=graph, params= ))
-    pass
+def computeMeans(groups, field):
+    output = []
+    for group in groups:
+        means = {k: 0 for k in group['values'][0][field]}
+        squared = {k: 0 for k in means}
+        for value in group['values']:
+            for k in means: 
+                means[k] += value[field][k]
+                squared[k] += value[field][k] ** 2
+        for k in means: 
+            means[k] /= len(group['values'])
+            squared[k] /= len(group['values'])
+        stdev = {k: abs(squared[k] - means[k] ** 2) ** (1/2) for k in means}
+        dev = {k: 1.96*stdev[k] for k in stdev}
+        copy = dict(group)
+        del copy['values']
+        copy['mean'] = means
+        copy['stdev'] = stdev
+        copy['dev'] = dev
+        output.append(copy)
+    return output
 
 if __name__ == '__main__':
-    BenchmarkEvaluate()
+    BenchmarkEvaluate('output/benchmark2.txt', 'output/unipartitni.txt')
+    BenchmarkEvaluate('output/benchmark4.txt', 'output/comNums.txt')
