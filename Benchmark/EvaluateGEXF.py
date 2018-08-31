@@ -19,7 +19,8 @@ def EvaluateGEXF(useService=False):
         G = getGraph(graph)
         if useService:
             memberships = detectMemberships(G)
-            for method in memberships: appendMemberships(G, memberships[method], name=method+'Service')
+            for method in memberships: appendMemberships(G, memberships[method], name=method + 'Service')
+            saveGraph(G, graph)
         else:
             memberships = membershipsFromGEXF(G)
         original = getMemberships(G, 'community')
@@ -61,13 +62,17 @@ def getGraph(graph):
     return nx.read_gexf('output/{}.gexf'.format(graph))
 
 
+def saveGraph(G, graph):
+    return nx.write_gexf(G, 'output/{}.gexf'.format(graph))
+
+
 def loadGraphs():
     graphs = [f.name.replace('.gexf', '') for f in os.scandir('output') if f.name.endswith('.gexf')]
     return graphs
 
 
 def appendMemberships(graph : nx.Graph, memberships, name='memberships'):
-    communities = {n: str([c + 1 for c, ms in enumerate(memberships) if n in ms]) for n in graph.nodes}
+    communities = {n: str([c + 1 for c, ms in enumerate(memberships) if int(n) in ms]) for n in graph.nodes}
     nx.set_node_attributes(graph, communities, name)
 
     
