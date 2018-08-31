@@ -20,6 +20,7 @@ class DetectionWebService(object):
         self.proxy = ServiceProxy(url)
         
     def bigClam(self, graph : nx.Graph, comsNum=-1):
+        if not comsNum: comsNum = -1
         edges = self._getEdges(graph)
         return self.proxy.bigClam(edges, comsNum)
     
@@ -29,10 +30,12 @@ class DetectionWebService(object):
         return self.proxy.louvain(nodes, edges)
     
     def olapSBM(self, graph : nx.Graph, maxComs=10, runsPerNetwork=10):
+        if not maxComs: maxComs = 10
         edges = self._getEdges(graph)
         return self.proxy.olapSBM(edges, maxComs, runsPerNetwork)
     
     def biSBM(self, graph : nx.Graph, Ka=5, Kb=5, isDegreeCorrected=True, KLsteps=5):
+        if not Ka or not Kb: Ka, Kb = 5, 5
         edges = self._getEdges(graph)
         types = self._getTypes(graph)
         return self.proxy.biSBM(edges, types, Ka, Kb, isDegreeCorrected, KLsteps)
