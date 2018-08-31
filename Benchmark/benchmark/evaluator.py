@@ -36,7 +36,7 @@ class Evaluator(object):
     def __call__(self):
         return self.compare()
     
-    def evaluate(self, fraction=False):
+    def evaluate(self, fraction=True):
         aggregated = self.aggregate(self.get_original(), self.get_detected())
         if fraction:
             selfAggregated = self.selfFraction(aggregated)
