@@ -76,14 +76,19 @@ def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4
     if values:
         for (i, j), z in np.ndenumerate(data):
             ax.text(j, i, '{:0.3f}±{:0.3f}'.format(z,conf[i,j]), ha='center', va='center',
+                    fontsize=8,
                     bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'))
-    if headers: ax.set_xticklabels([-1]+_headers, rotation=90)
-    if labels: ax.set_yticklabels([-2]+params)
-    else: ax.set_yticklabels([-2]+[i+1 for i in range(len(params))])
+    ax.set_xticks(np.arange(data.shape[1]), minor=False)
+    ax.set_yticks(np.arange(data.shape[0]), minor=False)
+    if headers: ax.set_xticklabels(_headers, rotation=90)
+    if labels: ax.set_yticklabels(params)
+    else: ax.set_yticklabels([i+1 for i in range(len(params))])
     if a4paper: plt.gcf().set_size_inches(8.27,11.69)
     plt.savefig(imageFile)
     plt.close()
 
 if __name__ == '__main__':
-    BenchmarkEvaluate('output/benchmark2.txt', 'output/unipartitni.txt')
-    #BenchmarkEvaluate('output/benchmark4.txt', 'output/comNums.txt')
+    BenchmarkEvaluate('output/benchmarkUnipartite.txt', 'output/unipartitni.txt')
+    BenchmarkEvaluate('output/benchmark3.txt', 'output/bipartitni.txt')
+    BenchmarkEvaluate('output/benchmarkComNumsUni.txt', 'output/comNumsUni.txt')
+    BenchmarkEvaluate('output/benchmarkComNumsBi.txt', 'output/comNumsBi.txt')
