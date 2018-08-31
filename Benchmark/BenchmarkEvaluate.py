@@ -89,6 +89,6 @@ def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4
 
 if __name__ == '__main__':
     BenchmarkEvaluate('output/benchmarkUnipartite.txt', 'output/unipartitni.txt')
-    BenchmarkEvaluate('output/benchmark3.txt', 'output/bipartitni.txt')
+    BenchmarkEvaluate('output/benchmarkBipartite.txt', 'output/bipartitni.txt')
     BenchmarkEvaluate('output/benchmarkComNumsUni.txt', 'output/comNumsUni.txt')
     BenchmarkEvaluate('output/benchmarkComNumsBi.txt', 'output/comNumsBi.txt')
