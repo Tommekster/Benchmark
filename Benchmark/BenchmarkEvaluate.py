@@ -15,25 +15,33 @@ def BenchmarkEvaluate():
     #printResults(means)
     
 def loadRecords(file):
-    return [eval(line) for line in open(file)]
+    return (eval(line) for line in open(file))
 
-def groupBy(records, *nargs):
-    key = nargs[0]
+def groupBy(records, *nargs, keyAsTuple=True):
+    if keyAsTuple:
+        keys = nargs[:]
+    else: 
+        keys = nargs[0]
     groups = {}
     output = []
     for r in records:
-        group = str(r[key])
+        group = str([r[key] for key in keys])
         if not group in groups:
-            output.append({key:r[key], 'values': []})
+            output.append({key:r[key] for key in keys})
+            output[-1]['values'] = []
             groups[group] = output[-1]['values']
         copy = dict(r)
-        del copy[key]
+        for key in keys: del copy[key]
         groups[group].append(copy)
-    if len(nargs) > 1:
-        keys = nargs[1:]
+    if not keyAsTuple and len(nargs) > 1:
+        _keys = nargs[1:]
         for g in output:
-            g['values'] = groupBy(g['values'], *keys)
+            g['values'] = groupBy(g['values'], *_keys)
     return output
+
+def computeMeans(runs, field):
+    #return (dict(graph=graph, params= ))
+    pass
 
 if __name__ == '__main__':
     BenchmarkEvaluate()
