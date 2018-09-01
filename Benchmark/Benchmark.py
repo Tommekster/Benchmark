@@ -12,8 +12,9 @@ from benchmark.evaluator import Evaluator
 from benchmark.modelBuilder import ModelBuilder
 from benchmark.bipartitniModelBuilder import BipartitniModelBuilder
 
-service = DetectionWebService("http://localhost:8100/jsonrpc")
-EVALUATION_FILE = 'output/benchmark.txt'
+PORT = 8100
+service = DetectionWebService("http://localhost:{}/jsonrpc".format(PORT))
+EVALUATION_FILE = 'output/benchmark{}.txt'.format(PORT)
 GRAPHS_COUNT = 100
 
 
@@ -154,4 +155,6 @@ def recordEvaluation(record : dict):
 
 
 if __name__ == '__main__':
+    print('modules loaded')
+    print('port {}'.format(PORT))
     Benchmark()

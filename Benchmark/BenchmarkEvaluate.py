@@ -17,6 +17,7 @@ def BenchmarkEvaluate(inputFile, outputFile):
     with open(outputFile,'w') as f: f.write(json.dumps(means, indent=4))
     plotEvaluations(means,outputFile+'.png', values=False, a4paper=False)
     plotEvaluations(means,outputFile+'.pdf', labels=False)
+    texTable(means, outputFile+'.tex')
     
 def loadRecords(file):
     return (eval(line) for line in open(file))
@@ -67,7 +68,8 @@ def computeMeans(groups, field):
     return output
 
 def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4paper=True):
-    _headers = [k for k in means[0]['mean']]
+    #_headers = [k for k in means[0]['mean']]
+    _headers = ['louvain', 'olapSBMmax', 'olapSBM', 'bigClam', 'biSBM']
     data = np.array([[row['mean'][k] for k in _headers] for row in means])
     conf = np.array([[row['dev'][k] for k in _headers] for row in means])
     params = [str(row['params']) for row in means]
@@ -87,8 +89,17 @@ def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4
     plt.savefig(imageFile)
     plt.close()
 
+def texTable(means, texFile):
+    #_headers = [k for k in means[0]['mean']]
+    _headers = ['louvain', 'olapSBMmax', 'olapSBM', 'bigClam', 'biSBM']
+    with open(texFile, 'w') as f:
+        f.write(' & '.join(_headers)+'\\\\ \\hline \n')
+        for row in means: f.write(' & '.join(['{:0.3f}$\\pm${:0.3f}'.format(row['mean'][k],row['dev'][k]) for k in _headers])+'\\\\\n')
+    
+
 if __name__ == '__main__':
     BenchmarkEvaluate('output/benchmarkUnipartite.txt', 'output/unipartitni.txt')
     BenchmarkEvaluate('output/benchmarkBipartite.txt', 'output/bipartitni.txt')
     BenchmarkEvaluate('output/benchmarkComNumsUni.txt', 'output/comNumsUni.txt')
     BenchmarkEvaluate('output/benchmarkComNumsBi.txt', 'output/comNumsBi.txt')
+    BenchmarkEvaluate('output/benchmarkBipartite2.txt', 'output/bipartitni2.txt')
