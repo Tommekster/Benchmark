@@ -9,18 +9,22 @@ import numpy as np
 
 BENCHMARK_FILE = 'benchmark.txt'
 
+
 def BenchmarkEvaluate(inputFile, outputFile):
     print(' '.join([inputFile, outputFile]))
     records = loadRecords(inputFile)
-    runs = groupBy(records, 'graph','params')
+    runs = groupBy(records, 'graph', 'params')
     means = computeMeans(runs, 'evaluations')
-    with open(outputFile,'w') as f: f.write(json.dumps(means, indent=4))
-    plotEvaluations(means,outputFile+'.png', values=False, a4paper=False)
-    plotEvaluations(means,outputFile+'.pdf', labels=False)
-    texTable(means, outputFile+'.tex')
+    with open(outputFile, 'w') as f: f.write(json.dumps(means, indent=4))
+    plotEvaluations(means, outputFile + '.png', values=False, a4paper=False)
+    plotEvaluations(means, outputFile + '.pdf', labels=False)
+    plotEvaluations(means, outputFile + '.T.pdf', labels=False, transpose=True)
+    texTable(means, outputFile + '.tex')
+
     
 def loadRecords(file):
     return (eval(line) for line in open(file))
+
 
 def groupBy(records, *nargs, keyAsTuple=True):
     if keyAsTuple:
@@ -44,6 +48,7 @@ def groupBy(records, *nargs, keyAsTuple=True):
             g['values'] = groupBy(g['values'], *_keys)
     return output
 
+
 def computeMeans(groups, field):
     output = []
     for group in groups:
@@ -56,8 +61,8 @@ def computeMeans(groups, field):
         for k in means: 
             means[k] /= len(group['values'])
             squared[k] /= len(group['values'])
-        stdev = {k: abs(squared[k] - means[k] ** 2) ** (1/2) for k in means}
-        dev = {k: 1.96*stdev[k] for k in stdev}
+        stdev = {k: abs(squared[k] - means[k] ** 2) ** (1 / 2) for k in means}
+        dev = {k: 1.96 * stdev[k] for k in stdev}
         copy = dict(group)
         del copy['values']
         copy['mean'] = means
@@ -67,34 +72,46 @@ def computeMeans(groups, field):
         output.append(copy)
     return output
 
-def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4paper=True):
-    #_headers = [k for k in means[0]['mean']]
+
+def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4paper=True, transpose=False):
+    # _headers = [k for k in means[0]['mean']]
     _headers = ['louvain', 'olapSBMmax', 'olapSBM', 'bigClam', 'biSBM']
     data = np.array([[row['mean'][k] for k in _headers] for row in means])
     conf = np.array([[row['dev'][k] for k in _headers] for row in means])
+    if transpose:
+        data = data.transpose()
+        conf = conf.transpose()
     params = [str(row['params']) for row in means]
     _, ax = plt.subplots()
     ax.matshow(data, cmap='seismic')
     if values:
         for (i, j), z in np.ndenumerate(data):
-            ax.text(j, i, '{:0.3f}±{:0.3f}'.format(z,conf[i,j]), ha='center', va='center',
+            ax.text(j, i, '{:0.3f}±{:0.3f}'.format(z, conf[i, j]), ha='center', va='center',
                     fontsize=8,
                     bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'))
     ax.set_xticks(np.arange(data.shape[1]), minor=False)
     ax.set_yticks(np.arange(data.shape[0]), minor=False)
-    if headers: ax.set_xticklabels(_headers, rotation=90)
-    if labels: ax.set_yticklabels(params)
-    else: ax.set_yticklabels([i+1 for i in range(len(params))])
-    if a4paper: plt.gcf().set_size_inches(8.27,11.69)
+    if transpose:
+        if headers: ax.set_yticklabels(_headers)
+        if labels: ax.set_xticklabels(params, rotation=90)
+        else: ax.set_xticklabels([i + 1 for i in range(len(params))])
+    else:
+        if headers: ax.set_xticklabels(_headers, rotation=90)
+        if labels: ax.set_yticklabels(params)
+        else: ax.set_yticklabels([i + 1 for i in range(len(params))])
+    if a4paper:
+        dim = (11.69, 8.27) if transpose else (8.27, 11.69)
+        plt.gcf().set_size_inches(dim)
     plt.savefig(imageFile)
     plt.close()
 
+
 def texTable(means, texFile):
-    #_headers = [k for k in means[0]['mean']]
+    # _headers = [k for k in means[0]['mean']]
     _headers = ['louvain', 'olapSBMmax', 'olapSBM', 'bigClam', 'biSBM']
     with open(texFile, 'w') as f:
-        f.write(' & '.join(_headers)+'\\\\ \\hline \n')
-        for row in means: f.write(' & '.join(['{:0.3f}$\\pm${:0.3f}'.format(row['mean'][k],row['dev'][k]) for k in _headers])+'\\\\\n')
+        f.write(' & '.join(_headers) + '\\\\ \\hline \n')
+        for row in means: f.write(' & '.join(['{:0.3f}$\\pm${:0.3f}'.format(row['mean'][k], row['dev'][k]) for k in _headers]) + '\\\\\n')
     
 
 if __name__ == '__main__':
