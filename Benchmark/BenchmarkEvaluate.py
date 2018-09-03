@@ -18,7 +18,8 @@ def BenchmarkEvaluate(inputFile, outputFile):
     with open(outputFile, 'w') as f: f.write(json.dumps(means, indent=4))
     plotEvaluations(means, outputFile + '.png', values=False, a4paper=False)
     plotEvaluations(means, outputFile + '.pdf', labels=False)
-    plotEvaluations(means, outputFile + '.T.pdf', labels=False, transpose=True)
+    plotEvaluations(means, outputFile + '.T.pdf', labels=False, transpose=True,
+                    mathshowArgs=dict(aspect=0.3))
     texTable(means, outputFile + '.tex')
 
     
@@ -73,7 +74,8 @@ def computeMeans(groups, field):
     return output
 
 
-def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4paper=True, transpose=False):
+def plotEvaluations(means, imageFile, headers=True, values=True, labels=True,
+                    a4paper=True, transpose=False, fontsize=8, mathshowArgs=dict()):
     # _headers = [k for k in means[0]['mean']]
     _headers = ['louvain', 'olapSBMmax', 'olapSBM', 'bigClam', 'biSBM']
     data = np.array([[row['mean'][k] for k in _headers] for row in means])
@@ -82,12 +84,16 @@ def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4
         data = data.transpose()
         conf = conf.transpose()
     params = [str(row['params']) for row in means]
+    
     _, ax = plt.subplots()
-    ax.matshow(data, cmap='seismic')
+    matshowkw = dict(cmap='seismic')
+    matshowkw.update(mathshowArgs)
+    ax.matshow(data, **matshowkw)
+    
     if values:
         for (i, j), z in np.ndenumerate(data):
             ax.text(j, i, '{:0.3f}±{:0.3f}'.format(z, conf[i, j]), ha='center', va='center',
-                    fontsize=8,
+                    fontsize=fontsize,
                     bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'))
     ax.set_xticks(np.arange(data.shape[1]), minor=False)
     ax.set_yticks(np.arange(data.shape[0]), minor=False)
@@ -95,6 +101,7 @@ def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4
         if headers: ax.set_yticklabels(_headers)
         if labels: ax.set_xticklabels(params, rotation=90)
         else: ax.set_xticklabels([i + 1 for i in range(len(params))])
+        ax.xaxis.set_ticks_position('bottom')
     else:
         if headers: ax.set_xticklabels(_headers, rotation=90)
         if labels: ax.set_yticklabels(params)
@@ -102,6 +109,7 @@ def plotEvaluations(means, imageFile, headers=True, values=True, labels=True, a4
     if a4paper:
         dim = (11.69, 8.27) if transpose else (8.27, 11.69)
         plt.gcf().set_size_inches(dim)
+        
     plt.savefig(imageFile)
     plt.close()
 
